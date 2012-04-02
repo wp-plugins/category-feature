@@ -2,8 +2,8 @@
 /*
 Plugin Name: Featured Category Widget
 Plugin URI: http://wasistlos.waldemarstoffel.com/plugins-fur-wordpress/category-column-plugin
-Description: The Category Column does simply, what the name says; it creates a widget, which you can drag to your sidebar and it will show excerpts of the posts of other categories than showed in the center-column. The plugin is tested with WP up to version 3.4. It might work with versions down to 2.7, but that will never be explicitly supported. The plugin has fully adjustable widgets.  You can choose the number of posts displayed, the offset (only on your homepage or always) and whether or not a line is displayed between the posts.
-Version: 1.0
+Description: The Featured Category Widget does, what the name says; it creates a widget, which you can drag to your sidebar and it will show excerpts of the posts of the category you chose. Display one or more random posts or the first five of the category in order.
+Version: 1.1
 Author: Waldemar Stoffel
 Author URI: http://www.atelier-fuenf.de
 License: GPL3
@@ -81,6 +81,7 @@ function form($instance) {
 	$title = esc_attr($instance['title']);
 	$postcount = esc_attr($instance['postcount']);
 	$offset = esc_attr($instance['offset']);
+	$random = esc_attr($instance['random']);
 	$home = esc_attr($instance['home']);
 	$category_id = esc_attr($instance['category_id']);
 	$wordcount = esc_attr($instance['wordcount']);
@@ -136,6 +137,11 @@ function form($instance) {
  <label for="<?php echo $this->get_field_id('offset'); ?>">
  <?php _e('Offset (how many posts are spared out in the beginning):', 'featured-category'); ?>
  <input size="4" id="<?php echo $this->get_field_id('offset'); ?>" name="<?php echo $this->get_field_name('offset'); ?>" type="text" value="<?php echo $offset; ?>" />
+ </label>
+</p>
+<p>
+ <label for="<?php echo $this->get_field_id('random'); ?>">
+ <input id="<?php echo $this->get_field_id('random'); ?>" name="<?php echo $this->get_field_name('random'); ?>" <?php if(!empty($random)) echo 'checked="checked"'; ?> type="checkbox" />&nbsp;<?php _e('Check to display random post(s) instead of a standard loop:', 'featured-category'); ?>
  </label>
 </p>
 <p>
@@ -236,6 +242,7 @@ function update($new_instance, $old_instance) {
 	 $instance['title'] = strip_tags($new_instance['title']);
 	 $instance['postcount'] = strip_tags($new_instance['postcount']);
 	 $instance['offset'] = strip_tags($new_instance['offset']);
+	 $instance['random'] = strip_tags($new_instance['random']);
 	 $instance['home'] = strip_tags($new_instance['home']);
 	 $instance['category_id'] = strip_tags($new_instance['category_id']); 
 	 $instance['wordcount'] = strip_tags($new_instance['wordcount']);
@@ -264,22 +271,22 @@ function widget($args, $instance) {
 	
 	// get the type of page, we're actually on
 
-	if (is_front_page()) $afpw_pagetype='frontpage';
-	if (is_home()) $afpw_pagetype='homepage';
-	if (is_page()) $afpw_pagetype='page';
-	if (is_category()) $afpw_pagetype='category';
-	if (is_single()) $afpw_pagetype='single';
-	if (is_date()) $afpw_pagetype='date';
-	if (is_tag()) $afpw_pagetype='tag';
-	if (is_attachment()) $afpw_pagetype='attachment';
-	if (is_tax()) $afpw_pagetype='taxonomy';
-	if (is_author()) $afpw_pagetype='author';
-	if (is_search()) $afpw_pagetype='search';
-	if (is_404()) $afpw_pagetype='not_found';
+	if (is_front_page()) $cfw_pagetype='frontpage';
+	if (is_home()) $cfw_pagetype='homepage';
+	if (is_page()) $cfw_pagetype='page';
+	if (is_category()) $cfw_pagetype='category';
+	if (is_single()) $cfw_pagetype='single';
+	if (is_date()) $cfw_pagetype='date';
+	if (is_tag()) $cfw_pagetype='tag';
+	if (is_attachment()) $cfw_pagetype='attachment';
+	if (is_tax()) $cfw_pagetype='taxonomy';
+	if (is_author()) $cfw_pagetype='author';
+	if (is_search()) $cfw_pagetype='search';
+	if (is_404()) $cfw_pagetype='not_found';
 	
 	// display only, if said so in the settings of the widget
 
-if ($instance[$afpw_pagetype]) :
+if ($instance[$cfw_pagetype]) :
 	
 	extract( $args );
 	
@@ -335,6 +342,8 @@ if (is_home() || empty($instance['home'])) :
 endif;
 
 $cfw_setup.='&cat='.$instance['category_id'];
+
+if (!empty($instance['random'])) $cfw_setup.='&orderby=rand';
 
 if (is_single()) :
 	
