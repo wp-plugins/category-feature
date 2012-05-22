@@ -63,11 +63,15 @@ to the widget style to get a nice shadow down right of the container. This is no
 
 == Changelog ==
 
-= 1.0 =
-* initial release
+= 1.2 =
+* code overhaul
+* hooks into the [Ads Easy Plugin](http://wordpress.org/extend/plugins/adeasy) if Google AdSense Tags are in use
 
 = 1.1 =
 * possibility to choose random posts
+
+= 1.0 =
+* initial release
 
 == Upgrade Notice ==
 
@@ -76,3 +80,6 @@ just new
 
 = 1.1 =
 possibility to choose random posts
+
+= 1.2 =
+code overhaul and plugin hooks into the Ads Easy Plugin if Google AdSense Tags are in use
