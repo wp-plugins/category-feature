@@ -3,7 +3,7 @@
 Plugin Name: Featured Category Widget
 Plugin URI: http://blog.atelier-fuenf.de/wordpress-plugins/featured-category-widget
 Description: The Featured Category Widget does, what the name says; it creates a widget, which you can drag to your sidebar and it will show excerpts of the posts of the category you chose. Display one or more random posts or the first five of the category in order.
-Version: 1.2
+Version: 1.3
 Author: Waldemar Stoffel
 Author URI: http://www.atelier-fuenf.de
 License: GPL3

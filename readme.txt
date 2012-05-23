@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: column, sidebar, widget, category, newspaper, image, multi widget, teaser, featured, post, featured post, random post
 Requires at least: 2.7
 Tested up to: 3.4
-Stable tag: 1.1
+Stable tag: 1.3
 
 The Featured Category Widget is basically a Featured Post Widget for a category.
 
@@ -63,6 +63,9 @@ to the widget style to get a nice shadow down right of the container. This is no
 
 == Changelog ==
 
+= 1.3 =
+* small bugfix in auto excerpt
+
 = 1.2 =
 * code overhaul
 * hooks into the [Ads Easy Plugin](http://wordpress.org/extend/plugins/adeasy) if Google AdSense Tags are in use
@@ -83,3 +86,6 @@ possibility to choose random posts
 
 = 1.2 =
 code overhaul and plugin hooks into the Ads Easy Plugin if Google AdSense Tags are in use
+
+= 1.3 =
+small bugfix in auto excerpt

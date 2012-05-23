@@ -28,7 +28,7 @@ function form($instance) {
 	
 // setup some default settings
 
-	$defaults = array( 'postcount' => 5, 'line' => 1, 'line_color' => '#dddddd');
+	$defaults = array( 'postcount' => 5, 'line' => 1, 'line_color' => '#dddddd', 'homepage' => 1, 'category' => 1);
 	
 	$instance = wp_parse_args( (array) $instance, $defaults );
 	
@@ -424,6 +424,7 @@ foreach($cfw_posts as $post) :
 	'linespace' => $instance['linespace'],
 	'readmore' => $instance['readmore'],
 	'rmtext' => $rmtext,
+	'link' => get_permalink(),
 	'title' => $cfw_title_tag
 	);
 	
