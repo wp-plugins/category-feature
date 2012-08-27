@@ -6,17 +6,21 @@
  *
  * @ A5 Plugin Framework
  *
- * Gets the excerpt of a post accoring to some parameters
+ * Gets the excerpt of a post according to some parameters
  *
  */
 
 class A5_Excerpt {
+	
+	const version = '1.0';
 	
 	var $output;
 	
 	function get_excerpt($args) {
 		
 		extract($args);
+		
+		if (!$offset) $offset = 0;
 		
 		if ($usertext) :
 		
@@ -34,27 +38,27 @@ class A5_Excerpt {
 			
 				$text = trim(preg_replace('/\s\s+/', ' ', str_replace(array("\r\n", "\n", "\r", "&nbsp;"), ' ', $excerpt_base)));
 				
-				$length = (!empty($count)) ? $count : 3;
+				$length = ($count) ? $count : 3;
 				
-				$style = (!empty($type)) ? $type : 'sentenses';
+				$style = ($type) ? $type : 'sentences';
 				
 				if ($style == 'words') :
 					
-					$short=array_slice(explode(' ', $text), 0, $length);
+					$short=array_slice(explode(' ', $text), $offset, $length);
 					
 					$this->output=trim(implode(' ', $short));
 					
 				else :
 				
-					if ($style == 'sentenses') :
+					if ($style == 'sentences') :
 					
-						$short=array_slice(preg_split("/([\t.!?]+)/", $text, -1, PREG_SPLIT_DELIM_CAPTURE), 0, $length*2);
+						$short=array_slice(preg_split("/([\t.!?]+)/", $text, -1, PREG_SPLIT_DELIM_CAPTURE), $offset*2, $length*2);
 						
 						$this->output=trim(implode($short));
 						
 					else :
 						
-						$this->output=substr($text, 0, $length+1);
+						$this->output=substr($text, $offset, $length);
 						
 					endif;
 					
@@ -86,8 +90,9 @@ class A5_Excerpt {
 		
 		if ($readmore) $this->output.=' <a href="'.$link.'" title="'.$title.'">'.$rmtext.'</a>';
 		
-		return $this->output;
+		$return = ($filter) ? $this->output : apply_filters('the_excerpt', $this->output);
 		
+		return $return;
 	
 	} // get_excerpt
 	

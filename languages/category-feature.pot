@@ -60,16 +60,16 @@ msgstr ""
 
 #: class-lib/CF_WidgetClass.php:112
 msgid ""
-"To overwrite the excerpt of WP, give here the number of sentenses from the "
+"To overwrite the excerpt of WP, give here the number of sentences from the "
 "post that you want to display:"
 msgstr ""
 
 #: class-lib/CF_WidgetClass.php:118
-msgid "Check to display words instead of sentenses:"
+msgid "Check to display words instead of sentences:"
 msgstr ""
 
 #: class-lib/CF_WidgetClass.php:123
-msgid "Check to have each sentense in a new line."
+msgid "Check to have each sentence in a new line."
 msgstr ""
 
 #: class-lib/CF_WidgetClass.php:128

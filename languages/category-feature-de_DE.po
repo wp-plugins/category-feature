@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2012-05-23 01:04+0200\n"
+"PO-Revision-Date: 2012-06-02 20:53+0200\n"
 "Last-Translator: Waldemar Stoffel <stoffel@atelier-fuenf.de>\n"
 "Language-Team: Waldemar Stoffel <stoffel@atelier-fuenf.de>\n"
 "X-Poedit-Language: German\n"
@@ -61,15 +61,15 @@ msgid "Check to have the offset only on your frontpage:"
 msgstr "Anklicken, um den Offset nur auf der Homepage zu haben."
 
 #: class-lib/CF_WidgetClass.php:112
-msgid "To overwrite the excerpt of WP, give here the number of sentenses from the post that you want to display:"
+msgid "To overwrite the excerpt of WP, give here the number of sentences from the post that you want to display:"
 msgstr "Um den Standardauszug zu überschreiben, gib hier die Zahl der Sätze an, die du vom Artikel anzeigen willst:"
 
 #: class-lib/CF_WidgetClass.php:118
-msgid "Check to display words instead of sentenses:"
+msgid "Check to display words instead of sentences:"
 msgstr "Anklicken, um Wörter anstatt Sätze als Auszug zu nehmen."
 
 #: class-lib/CF_WidgetClass.php:123
-msgid "Check to have each sentense in a new line."
+msgid "Check to have each sentence in a new line."
 msgstr "Anklicken, um jeden Satz in einer neuen Zeile zu haben."
 
 #: class-lib/CF_WidgetClass.php:128
