@@ -12,35 +12,59 @@
 
 class A5_ImageTags {
 	
-	var $tags;
+	const version = '1.0';
 	
-	function get_tags($post, $language_file) {
+	public $tags;
 	
-		setup_postdata($post);
+	function get_tags($post, $image_cache, $language_file) {
 		
-		$args = array(
-		'post_type' => 'attachment',
-		'numberposts' => 1,
-		'post_status' => null,
-		'post_parent' => $post->ID
-		);
+		$options = get_option($image_cache);
 		
-		$title_tag = __('Permalink to', $language_file).' '.esc_attr($post->post_title);
+		$cache = $options['tags'];
 		
-		$attachments = get_posts( $args );
+		if (array_key_exists($post->ID, $cache)) :
 		
-		if ( $attachments ) :
+			$image_alt = $cache[$post->ID]['image_alt'];
+			$image_title = $cache[$post->ID]['image_title'];
+			$title_tag = $cache[$post->ID]['title_tag'];
 		
-			$attachment = $attachments[0];
-			  
-			$image_alt = trim(strip_tags( get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true) ));
+		else:
+	
+			setup_postdata($post);
 			
-			$image_title = trim(strip_tags( $attachment->post_title ));
+			$args = array(
+			'post_type' => 'attachment',
+			'numberposts' => 1,
+			'post_status' => null,
+			'post_parent' => $post->ID
+			);
+			
+			$title_tag = __('Permalink to', $language_file).' '.esc_attr($post->post_title);
+			
+			$attachments = get_posts( $args );
+			
+			if ( $attachments ) :
+			
+				$attachment = $attachments[0];
+				  
+				$image_alt = trim(strip_tags( get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true) ));
+				
+				$image_title = trim(strip_tags( $attachment->post_title ));
+			
+			endif;
+		
+			$image_alt = (empty($image_alt)) ? esc_attr($post->post_title) : esc_attr($image_alt);
+			$image_title = (empty($image_title)) ? esc_attr($post->post_title) : esc_attr($image_title);
+			
+			$cache[$post->ID]['image_alt'] = $image_alt;
+			$cache[$post->ID]['image_title'] = $image_title;
+			$cache[$post->ID]['title_tag'] = $title_tag;
+			
+			$options['tags'] = $cache;
+			
+			update_option($image_cache, $options);
 		
 		endif;
-		
-		$image_alt = (empty($image_alt)) ? esc_attr($post->post_title) : esc_attr($image_alt);
-		$image_title = (empty($image_title)) ? esc_attr($post->post_title) : esc_attr($image_title);
 		
 		$this->tags = array(
 		'image_alt' => $image_alt,
@@ -61,67 +85,101 @@ class A5_ImageTags {
  *
  * @ A5 Plugin Framework
  *
- * Gets all image related stuff
+ * Gets all thumbnail related stuff
  *
  */
 
 class A5_Thumbnail {
 	
-	var $image_info;
+	public $image_info;
 	
-	// getting the first image of a post with available sizes as the post thumbnail
+	// getting one image of a post with available sizes as the post thumbnail if there is no number specified, the first image is taken by default
+	// the last image will be taken, if the number is bigger than the amount of images in the post
 	
 	function get_thumbnail($args) {
 		
 		extract($args);
+		
+		if (!$thumb) : 
 	
-		$image = preg_match_all('/<\s*img[^>]+src\s*=\s*["\']?([^\s"\']+)["\']?[\s\/>]+/', do_shortcode($content), $matches);
-		$thumb = $matches [1] [0];
-		
-		if (empty($thumb)) return;
-		
-		$thumb_width = preg_match_all('/width\s*=\s*["\']?([^\s"\']+)["\']/', $matches [0] [0], $size);
-		$thumb_width = $size[1] [0];
-		
-		$thumb_height = preg_match_all('/height\s*=\s*["\']?([^\s"\']+)["\']/', $matches [0] [0], $size);
-		$thumb_height = $size[1] [0];
-		
-		if (!$thumb_width) : 
-		
-			$size=$this->get_size($thumb);
+			$image = preg_match_all('/<\s*img[^>]+src\s*=\s*["\']?([^\s"\']+)["\']?[\s\/>]+/', do_shortcode($content), $matches);
 			
-			$thumb_width = $size['width'];
+			if (!$number) $number = 1;
 			
-			$thumb_height = $size['height'];
+			if ($number == 'last' || $number > count($matches [1])) $number = count($matches [1]);
 			
-			$ratio = $thumb_width/$thumb_height;
+			$number -= 1;
+			
+			$thumb = $matches [1] [$number];
 			
 		endif;
 		
-		if ($thumb_width && $height) :
+		if (empty($thumb)) return false;
 		
-			if ($ratio > 1) :
-					
-				$thumb_height = intval($thumb_height/($thumb_width/$width));
+		$options = get_option($option);
+		
+		$cache = $options['sizes'];
+		
+		if (array_key_exists($thumb, $cache) && ($cache[$thumb]['width'] == $width || $cache[$thumb]['height'] == $height)) :
+		
+			$thumb_width = $cache[$thumb]['width'];
+			$thumb_height = $cache[$thumb]['height'];
+		
+		else :
+		
+			$thumb_width = preg_match_all('/width\s*=\s*["\']?([^\s"\']+)["\']/', $matches [0] [$number], $size);
+			$thumb_width = $size[1] [0];
+			
+			$thumb_height = preg_match_all('/height\s*=\s*["\']?([^\s"\']+)["\']/', $matches [0] [$number], $size);
+			$thumb_height = $size[1] [0];
+			
+			if (!$thumb_width) : 
+			
+				$size=$this->get_size($thumb);
 				
-				$thumb_width = $width;
-					
-				else :
+				$thumb_width = $size['width'];
 				
-				$thumb_width = intval($thumb_width/($thumb_height/$height));
+				$thumb_height = $size['height'];
 				
-				$thumb_height = $height;
+				if (!$thumb_width) return false;
+				
+				$ratio = $thumb_width/$thumb_height;
 				
 			endif;
 			
-		else :
-		
-			$ratio = $thumb_width/$thumb_height;
-		
-			$thumb_width = $width;
+			if ($thumb_width && $height) :
 			
-			$thumb_height = intval($thumb_width/$ratio);
-	
+				if ($ratio > 1) :
+						
+					$thumb_height = intval($thumb_height/($thumb_width/$width));
+					
+					$thumb_width = $width;
+						
+					else :
+					
+					$thumb_width = intval($thumb_width/($thumb_height/$height));
+					
+					$thumb_height = $height;
+					
+				endif;
+				
+			else :
+			
+				$ratio = $thumb_width/$thumb_height;
+			
+				$thumb_width = $width;
+				
+				$thumb_height = intval($thumb_width/$ratio);
+		
+			endif;
+			
+			$cache[$thumb]['width'] = $thumb_width;
+			$cache[$thumb]['height'] = $thumb_height;
+			
+			$options['sizes'] = $cache;
+			
+			update_option($option, $options);
+			
 		endif;
 	
 		$this->image_info = array (
