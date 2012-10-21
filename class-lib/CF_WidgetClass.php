@@ -34,6 +34,7 @@ function form($instance) {
 	$postcount = esc_attr($instance['postcount']);
 	$offset = esc_attr($instance['offset']);
 	$random = esc_attr($instance['random']);
+	$link_title = esc_attr($instance['link_title']);
 	$home = esc_attr($instance['home']);
 	$category_id = esc_attr($instance['category_id']);
 	$wordcount = esc_attr($instance['wordcount']);
@@ -71,36 +72,27 @@ function form($instance) {
 	$base_id = 'widget-'.$this->id_base.'-'.$this->number.'-';
 	$base_name = 'widget-'.$this->id_base.'['.$this->number.']';
 	
-	$field[] = array ('type' => 'text', 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'title', 'label' => __('Title:', self::language_file), 'value' => $title, 'class' => 'widefat', 'space' => 1);
-	$field[] = array ('type' => 'select', 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'category_id', 'label' => __('Category:', self::language_file), 'value' => $category_id, 'options' => $categories, 'default' => __('Choose a category', self::language_file), 'class' => 'widefat', 'style' => 'width:100%', 'space' => 1);
-	$field[] = array ('type' => 'number', 'size' => 4, 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'postcount', 'label' => __('How many posts will be displayed in the widget:', self::language_file), 'value' => $postcount, 'step' => 1, 'space' => 1);
-	$field[] = array ('type' => 'number', 'size' => 4, 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'offset', 'label' => __('Offset (how many posts are spared out in the beginning):', self::language_file), 'value' => $offset, 'step' => 1, 'space' => 1);
-	$field[] = array ('type' => 'checkbox', 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'random', 'label' => __('Check to display random post(s) instead of a standard loop:', self::language_file), 'value' => $random, 'space' => 1);
-	$field[] = array ('type' => 'checkbox', 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'home', 'label' => __('Check to have the offset only on your Frontpage.', self::language_file), 'value' => $home, 'space' => 1);
-	$field[] = array ('type' => 'number', 'size' => 4, 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'width', 'label' => __('Width of the thumbnail (in px):', self::language_file), 'value' => $width, 'step' => 1, 'space' => 1);
-	$field[] = array ('type' => 'number', 'size' => 4, 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'wordcount', 'label' => __('To overwrite the excerpt of WP, give here the number of sentences from the post that you want to display:', self::language_file), 'value' => $wordcount, 'min' => 1, 'step' => 1, 'space' => 1);
-	$field[] = array ('type' => 'checkbox', 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'words', 'label' => __('Check to display words instead of sentences.', self::language_file), 'value' => $words, 'space' => 1);
-	$field[] = array ('type' => 'checkbox', 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'linespace', 'label' => __('Check to have each sentence in a new line.', self::language_file), 'value' => $linespace, 'space' => 1);
-	$field[] = array ('type' => 'number', 'size' => 4, 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'line', 'label' => __('If you want a line between the posts, this is the height in px (if not wanting a line, leave emtpy):', self::language_file), 'value' => $line, 'space' => 1);
-	$field[] = array ('type' => 'color', 'size' => 13, 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'line_color', 'label' => __('The color of the line (e.g. #cccccc):', self::language_file), 'value' => $line_color, 'space' => 1);
-	$field[] = array ('type' => 'checkbox', 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'readmore', 'label' => __('Check to have an additional &#39;read more&#39; link at the end of the excerpt.', self::language_file), 'value' => $readmore, 'space' => 1);
-	$field[] = array ('type' => 'text', 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'rmtext', 'label' => __('Write here some text for the &#39;read more&#39; link. By default, it is', self::language_file).' [&#8230;]:', 'value' => $rmtext, 'class' => 'widefat', 'space' => 1);
+	a5_text_field($base_id.'title', $base_name.'[title]', $title, __('Title:', self::language_file), false, false, 'widefat', true, true);
+	a5_select($base_id.'category_id', $base_name.'[category_id]', $category_id, $categories, __('Category:', self::language_file), __('Choose a category', self::language_file), false, 'widefat', false, true, true);
+	a5_checkbox($base_id.'link_title', $base_name.'[link_title]', $link_title, __('Link the widget title to the chosen category.', self::language_file), false, false, true, true);
+	a5_number_field($base_id.'postcount', $base_name.'[postcount]', $postcount, __('How many posts will be displayed in the widget:', self::language_file), 4, 1, false, false, false, false, true, true);
+	a5_number_field($base_id.'offset', $base_name.'[offset]', $offset, __('Offset (how many posts are spared out in the beginning):', self::language_file), 4, 1, false, false, false, false, true, true);
+	a5_checkbox($base_id.'random', $base_name.'[random]', $random, __('Check to display random post(s) instead of a standard loop:', self::language_file), false, false, true, true);
+	a5_checkbox($base_id.'home', $base_name.'[home]', $home, __('Check to have the offset only on your Frontpage.', self::language_file), false, false, true, true);
+	a5_number_field($base_id.'width', $base_name.'[width]', $width, __('Width of the thumbnail (in px):', self::language_file), 4, 1, false, false, false, false, true, true);
+	a5_number_field($base_id.'wordcount', $base_name.'[wordcount]', $wordcount, __('To overwrite the excerpt of WP, give here the number of sentences from the post that you want to display:', self::language_file), 4, 1, 1, false, false, false, true, true);
+	a5_checkbox($base_id.'words', $base_name.'[words]', $words, __('Check to display words instead of sentences.', self::language_file), false, false, true, true);
+	a5_checkbox($base_id.'linespace', $base_name.'[linespace]', $linespace, __('Check to have each sentence in a new line.', self::language_file), false, false, true, true);
+	a5_number_field($base_id.'line', $base_name.'[line]', $line, __('If you want a line between the posts, this is the height in px (if not wanting a line, leave emtpy):', self::language_file), 4, 1, 1, false, false, false, true, true);
+	a5_color_field($base_id.'line_color', $base_name.'[line_color]', $line_color, __('The color of the line (e.g. #cccccc):', self::language_file), 13, false, false, true, true);	
+	a5_checkbox($base_id.'readmore', $base_name.'[readmore]', $readmore, __('Check to have an additional &#39;read more&#39; link at the end of the excerpt.', self::language_file), false, false, true, true);
+	a5_text_field($base_id.'rmtext', $base_name.'[rmtext]', $rmtext, sprintf(__('Write here some text for the &#39;read more&#39; link. By default, it is %s:', self::language_file), '[&#8230;]'), false, false, 'widefat', true, true);
+
+	if (defined('AE_AD_TAGS') && AE_AD_TAGS==1) a5_checkbox($base_id.'adsense', $base_name.'[adsense]', $adsense, __('Check if you want to invert the Google AdSense Tags that are defined with the Ads Easy Plugin. E.g. when they are turned off for the sidebar, they will appear in the widget.', self::language_file), false, false, true, true);
 	
-	if (defined('AE_AD_TAGS') && AE_AD_TAGS==1) :
-	
-	$field[] = array ('type' => 'checkbox', 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'adsense', 'label' => __('Check if you want to invert the Google AdSense Tags that are defined with the Ads Easy Plugin. E.g. when they are turned off for the sidebar, they will appear in the widget.', self::language_file), 'value' => $adsense, 'space' => 1);
-	
-	endif;
-	
-	$field[] = array ('type' => 'checkgroup', 'id_base' => $base_id, 'name_base' => $base_name, 'label' => __('Check, where you want to show the widget. By default, it is showing on the homepage and the category pages:', self::language_file), 'options' => $options, 'checkall' => __('Check all', self::language_file));
-	$field[] = array ('type' => 'textarea', 'id_base' => $base_id, 'name_base' => $base_name, 'field_name' => 'style', 'class' => 'widefat', 'label' => sprintf(__('Here you can finally style the widget. Simply type something like%1$s%2$sborder-left: 1px dashed;%2$sborder-color: #000000;%3$s%2$sto get just a dashed black line on the left. If you leave that section empty, your theme will style the widget.', self::language_file), '<strong>', '<br />', '</strong>'), 'value' => $style, 'space' => 1);
-	$field[] = array ('type' => 'resize', 'id_base' => $base_id, 'field_name' => array('style'));
-	
-	foreach ($field as $args) :
-	
-		$menu_item = new A5_WidgetControls($args);
- 
- 	endforeach;
+	a5_checkgroup($base_id, $base_name, $options, __('Check, where you want to show the widget. By default, it is showing on the homepage and the category pages:', self::language_file), __('Check all', self::language_file), false, false, true, true);
+	a5_textarea($base_id.'style', $base_name.'[style]', $style, false, false, sprintf(__('Here you can finally style the widget. Simply type something like%1$s%2$sborder-left: 1px dashed;%2$sborder-color: #000000;%3$s%2$sto get just a dashed black line on the left. If you leave that section empty, your theme will style the widget.', self::language_file), '<strong>', '<br />', '</strong>'), 'height: 60px;', 'widefat', true, true);
+	a5_resize_textarea(array($base_id.'excerpt', $base_id.'style'), true);
 	
 } // form
  
@@ -113,6 +105,7 @@ $instance = $old_instance;
 	$instance['offset'] = strip_tags($new_instance['offset']);
 	$instance['random'] = strip_tags($new_instance['random']);
 	$instance['home'] = strip_tags($new_instance['home']);
+	$instance['link_title'] = strip_tags($new_instance['link_title']);
 	$instance['category_id'] = strip_tags($new_instance['category_id']); 
 	$instance['wordcount'] = strip_tags($new_instance['wordcount']);
 	$instance['width'] = strip_tags($new_instance['width']);
@@ -194,6 +187,8 @@ if ($instance[$cfw_pagetype]) :
 	
 	echo $cfw_before_widget;
 	
+	if ( $title && $instance['link_title'] ) $title = '<a href="'.get_category_link($instance['category_id']).'" title="'.__('Permalink to', self::language_file).' '.get_cat_name($instance['category_id']).'">'.$title.'</a>';
+	
 	if ( $title ) echo $before_title . $title . $after_title;
  
 /* This is the actual function of the plugin, it fills the widget area with the customized excerpts */
@@ -209,7 +204,7 @@ if (is_home() || empty($instance['home'])) :
 	$cfw_page = $wp_query->get( 'paged' );
 	$cfw_numberposts = $wp_query->get( 'posts_per_page' );
 	
-	$cfw_offset = ($cfw_page) ? (($cfw_page-1)*$cfw_numberposts)+$instance['offset'] : $cfw_offset=$instance['offset'];
+	$cfw_offset = ($cfw_page) ? (($cfw_page-1)*$cfw_numberposts)+$instance['offset'] : $instance['offset'];
 	
 	$cfw_setup.='&offset='.$cfw_offset;
 
