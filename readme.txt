@@ -3,7 +3,7 @@ Contributors: tepelstreel
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RMF326NZYFL6L
 Tags: column, sidebar, widget, category, newspaper, image, multi widget, teaser, featured, post, featured post, random post
 Requires at least: 2.9
-Tested up to: 3.5
+Tested up to: 3.6
 Stable tag: 1.5
 
 The Featured Category Widget is basically a Featured Post Widget for a category.
@@ -63,6 +63,11 @@ to the widget style to get a nice shadow down right of the container. This is no
 
 == Changelog ==
 
+= 1.6 =
+
+* adjustments in the framework
+* some more customizing was asked
+
 = 1.5 =
 
 * you can now link the widget title to the displayed category
@@ -105,3 +110,7 @@ possibility to change size of thumbnail added; small bug fixed
 = 1.5 =
 
 you can now link the widget title to the displayed category
+
+= 1.6 =
+
+streamlined and more functionality added
