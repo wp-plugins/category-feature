@@ -38,7 +38,7 @@ if (!class_exists('A5_Image')) require_once FCW_PATH.'class-lib/A5_ImageClass.ph
 if (!class_exists('A5_Excerpt')) require_once FCW_PATH.'class-lib/A5_ExcerptClass.php';
 if (!class_exists('Featured_Category_Widget')) require_once FCW_PATH.'class-lib/CF_WidgetClass.php';
 if (!class_exists('A5_FormField')) require_once FCW_PATH.'class-lib/A5_FormFieldClass.php';
-if (!function_exists('a5_option_page_version')) require_once FCW_PATH.'includes/A5_field-functions.php';
+if (!function_exists('a5_textarea')) require_once FCW_PATH.'includes/A5_field-functions.php';
 
 class CategoryFeature {
 	
