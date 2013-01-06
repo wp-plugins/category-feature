@@ -10,7 +10,7 @@ License: GPL3
 Text Domain: category-feature
 */
 
-/*  Copyright 2012  Waldemar Stoffel  (email : stoffel@atelier-fuenf.de)
+/*  Copyright 2012 -2013 Waldemar Stoffel  (email : stoffel@atelier-fuenf.de)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,23 +34,23 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) die('Sorry,
 
 define( 'FCW_PATH', plugin_dir_path(__FILE__) );
 	
-if (!class_exists('A5_Thumbnail')) require_once FCW_PATH.'class-lib/A5_ImageClasses.php';
+if (!class_exists('A5_Image')) require_once FCW_PATH.'class-lib/A5_ImageClass.php';
 if (!class_exists('A5_Excerpt')) require_once FCW_PATH.'class-lib/A5_ExcerptClass.php';
 if (!class_exists('Featured_Category_Widget')) require_once FCW_PATH.'class-lib/CF_WidgetClass.php';
-if (!class_exists('A5_OptionPage')) require_once FCW_PATH.'class-lib/A5_OptionPageClass.php';
-if (!function_exists('a5_option_page_version')) require_once FCW_PATH.'includes/admin-pages.php';
+if (!class_exists('A5_FormField')) require_once FCW_PATH.'class-lib/A5_FormFieldClass.php';
+if (!function_exists('a5_option_page_version')) require_once FCW_PATH.'includes/A5_field-functions.php';
 
-class CategoryFeaturePlugin {
+class CategoryFeature {
 	
 	const language_file = 'category-feature';
 	
-	function CategoryFeaturePlugin() {
+	function __construct() {
 		
 		register_activation_hook(  __FILE__, array($this, 'install_cfw') );
 		register_deactivation_hook(  __FILE__, array($this, 'unset_cfw') );
 		
-		add_action('admin_enqueue_scripts', array($this, 'cfw_js_sheet'));
-		add_filter('plugin_row_meta', array($this, 'cfw_register_links'), 10, 2);
+		add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+		add_filter('plugin_row_meta', array($this, 'register_links'), 10, 2);
 		
 		// import laguage files
 		load_plugin_textdomain(self::language_file, false , basename(dirname(__FILE__)).'/languages');
@@ -58,7 +58,7 @@ class CategoryFeaturePlugin {
 	}
 	
 	/* attach JavaScript file for textarea resizing */
-	function cfw_js_sheet($hook) {
+	function enqueue_scripts($hook) {
 		
 		if ($hook != 'widgets.php') return;
 		
@@ -69,7 +69,7 @@ class CategoryFeaturePlugin {
 	
 	//Additional links on the plugin page
 	
-	function cfw_register_links($links, $file) {
+	function register_links($links, $file) {
 		
 		$base = plugin_basename(__FILE__);
 		
@@ -107,6 +107,6 @@ class CategoryFeaturePlugin {
 	
 }
 
-$category_feature = new CategoryFeaturePlugin;
+$CategoryFeature = new CategoryFeature;
 
 ?>
