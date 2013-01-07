@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: column, sidebar, widget, category, newspaper, image, multi widget, teaser, featured, post, featured post, random post
 Requires at least: 2.9
 Tested up to: 3.6
-Stable tag: 1.5
+Stable tag: 1.6
 
 The Featured Category Widget is basically a Featured Post Widget for a category.
 
