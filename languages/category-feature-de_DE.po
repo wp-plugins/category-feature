@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2013-01-07 00:25+0200\n"
+"PO-Revision-Date: 2013-01-07 12:14+0200\n"
 "Last-Translator: Waldemar Stoffel <stoffel@atelier-fuenf.de>\n"
 "Language-Team: Waldemar Stoffel <stoffel@atelier-fuenf.de>\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -88,6 +88,14 @@ msgstr "&#34;Nicht gefunden&#34;"
 msgid "Check all"
 msgstr "Alles auswählen"
 
+#: class-lib/CF_WidgetClass.php:95
+msgid "Above thumbnail"
+msgstr "Über dem Thumbnail"
+
+#: class-lib/CF_WidgetClass.php:95
+msgid "Under thumbnail"
+msgstr "Unter dem Thumbnail"
+
 #: class-lib/CF_WidgetClass.php:92
 msgid "Title:"
 msgstr "Titel:"
@@ -141,9 +149,19 @@ msgstr "Anklicken, um Wörter anstatt Sätze als Auszug zu nehmen."
 msgid "Check to have each sentence in a new line."
 msgstr "Anklicken, um jeden Satz in einer neuen Zeile zu haben."
 
+#: class-lib/CF_WidgetClass.php:108
+msgid "Choose, whether to display the title above or under the thumbnail."
+msgstr ""
+"Wähle, ob die Überschrift über oder unter dem Thumbnail angezeigt werden "
+"soll."
+
 #: class-lib/CF_WidgetClass.php:103
 msgid "Weight of the Post Title:"
 msgstr "Gewicht der Überschrift:"
+
+#: class-lib/CF_WidgetClass.php:111
+msgid "%1$sLimit the title to %2$s words.%3$s"
+msgstr "%1$sDie Länge der Überschrift auf %2$s Wörter reduzieren.%3$s"
 
 #: class-lib/CF_WidgetClass.php:104
 msgid ""
