@@ -59,6 +59,9 @@ const language_file = 'category-feature';
 		$search=esc_attr($instance['search']);
 		$not_found=esc_attr($instance['not_found']);
 		$h=esc_attr($instance['h']);
+		$headline=esc_attr($instance['headline']);
+		$headshort=esc_attr($instance['headshort']);
+		$class=esc_attr($instance['class']);
 		
 		$features = get_categories('hide_empty=0');
 		foreach ( $features as $feature ) :
@@ -89,6 +92,8 @@ const language_file = 'category-feature';
 		
 		$headings = array(array('1', 'h1'), array('2', 'h2'), array('3', 'h3'), array('4', 'h4'), array('5', 'h5'), array('6', 'h6'));
 		
+		$options = array (array('top', __('Above thumbnail', self::language_file)) , array('bottom', __('Under thumbnail', self::language_file)));
+		
 		a5_text_field($base_id.'title', $base_name.'[title]', $title, __('Title:', self::language_file), array('class' => 'widefat', 'space' => true));
 		a5_select($base_id.'category_id', $base_name.'[category_id]', $categories, $category_id, __('Category:', self::language_file), __('Choose a category', self::language_file), array('class' => 'widefat', 'space' => true));
 		a5_checkbox($base_id.'link_title', $base_name.'[link_title]', $link_title, __('Link the widget title to the chosen category.', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
@@ -100,11 +105,15 @@ const language_file = 'category-feature';
 		a5_number_field($base_id.'wordcount', $base_name.'[wordcount]', $wordcount, __('To overwrite the excerpt of WP, give here the number of sentences from the post that you want to display:', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
 		a5_checkbox($base_id.'words', $base_name.'[words]', $words, __('Check to display words instead of sentences.', self::language_file), array('space' => true));
 		a5_checkbox($base_id.'linespace', $base_name.'[linespace]', $linespace, __('Check to have each sentence in a new line.', self::language_file), array('space' => true));
+		a5_select($base_id.'headline', $base_name.'[headline]', $options, $headline, __('Choose, whether to display the title above or under the thumbnail.', self::language_file), false, array('space' => true));
 		a5_select($base_id.'h', $base_name.'[h]', $headings, $h, __('Weight of the Post Title:', self::language_file), false, array('space' => true));
+		$shorten_title = a5_number_field($base_id.'headshort', $base_name.'[headshort]', $headshort,false, array('size' => 4, 'step' => 1), false);
+		echo sprintf(__('%1$sLimit the title to %2$s words.%3$s', self::language_file), '<p>', $shorten_title, '</p>');
 		a5_number_field($base_id.'line', $base_name.'[line]', $line, __('If you want a line between the posts, this is the height in px (if not wanting a line, leave emtpy):', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
 		a5_color_field($base_id.'line_color', $base_name.'[line_color]', $line_color, __('The color of the line (e.g. #cccccc):', self::language_file), array('size' => 13, 'space' => true));	
 		a5_checkbox($base_id.'readmore', $base_name.'[readmore]', $readmore, __('Check to have an additional &#39;read more&#39; link at the end of the excerpt.', self::language_file), array('space' => true));
 		a5_text_field($base_id.'rmtext', $base_name.'[rmtext]', $rmtext, sprintf(__('Write here some text for the &#39;read more&#39; link. By default, it is %s:', self::language_file), '[&#8230;]'), array('class' => 'widefat', 'space' => true));
+		a5_text_field($base_id.'class', $base_name.'[class]', $class, __('If you want to style the &#39;read more&#39; link, you can enter a class here.', self::language_file), array('space' => true, 'class' => 'widefat'));
 		a5_checkgroup(false, false, $pages, __('Check, where you want to show the widget. By default, it is showing on the homepage and the category pages:', self::language_file), $checkall);
 		a5_textarea($base_id.'style', $base_name.'[style]', $style, sprintf(__('Here you can finally style the widget. Simply type something like%1$s%2$sborder-left: 1px dashed;%2$sborder-color: #000000;%3$s%2$sto get just a dashed black line on the left. If you leave that section empty, your theme will style the widget.', self::language_file), '<strong>', '<br />', '</strong>'), array('style' => 'height: 60px;', 'class' => 'widefat', 'space' => true));
 		a5_resize_textarea(array($base_id.'excerpt', $base_id.'style'));
@@ -145,6 +154,9 @@ const language_file = 'category-feature';
 		$instance['search'] = strip_tags($new_instance['search']);
 		$instance['not_found'] = strip_tags($new_instance['not_found']);
 		$instance['h'] = strip_tags($new_instance['h']);
+		$instance['headline'] = strip_tags($new_instance['headline']);
+		$instance['headshort'] = strip_tags($new_instance['headshort']);
+		$instance['class'] = strip_tags($new_instance['class']);
 		
 		return $instance;
 	
@@ -240,8 +252,24 @@ const language_file = 'category-feature';
 				
 				// build post title
 				
+				if ($instance['headshort']) :
+				
+					$args = array(
+					'content' => get_the_title(),
+					'count' => $instance['headshort'],
+					'type' => 'words'
+					);
+						
+					$the_title = A5_Excerpt::text($args).'&#8230;';
+					
+				else :
+				
+					$the_title = get_the_title();
+					
+				endif;
+				
 				$eol = "\r\n";
-				$cfw_headline = '<h'.$instance['h'].'>'.$eol.'<a href="'.get_permalink().'" title="'.$cfw_title_tag.'">'.get_the_title().'</a>'.$eol.'</h'.$instance['h'].'>'.$eol;
+				$cfw_headline = '<h'.$instance['h'].'>'.$eol.'<a href="'.get_permalink().'" title="'.$cfw_title_tag.'">'.$the_title.'</a>'.$eol.'</h'.$instance['h'].'>'.$eol;
 					
 				$cfw_title_tag = __('Permalink to', self::language_file).' '.$post->post_title;
 				
@@ -326,16 +354,22 @@ const language_file = 'category-feature';
 				'readmore' => $instance['readmore'],
 				'rmtext' => $rmtext,
 				'link' => get_permalink(),
-				'title' => $cfw_title_tag
+				'title' => $cfw_title_tag,
+				'class' => $instance['class'],
+				'filter' => true
 				);
 				
 				$cfw_text = A5_Excerpt::text($args);
 				
 				// output
 				
+				if ('top' == $instance['headline']) echo $cfw_headline;
+				
 				if ($cfw_img) echo $eol.'<a href="'.get_permalink().'" title="'.$cfw_title_tag.'">'.$cfw_img.'</a>'.$eol.'<div style="clear:both;"></div>'.$eol;
 				
-				echo $cfw_headline.$cfw_text;
+				if ('bottom' == $instance['headline']) echo $cfw_headline;
+				
+				echo $cfw_text;
 				
 				// line, if wanted
 				   
