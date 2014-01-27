@@ -8,12 +8,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2013-01-07 12:18+0200\n"
+"PO-Revision-Date: 2014-01-27 13:37+0200\n"
 "Last-Translator: Waldemar Stoffel <stoffel@atelier-fuenf.de>\n"
 "Language-Team: Waldemar Stoffel <stoffel@atelier-fuenf.de>\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: de_DE\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.6.3\n"
 
 #: category-feature.php:78
 msgid "FAQ"
@@ -96,6 +96,34 @@ msgstr "Über dem Thumbnail"
 msgid "Under thumbnail"
 msgstr "Unter dem Thumbnail"
 
+#: class-lib/CF_WidgetClass.php:60
+msgid "Under image"
+msgstr "Unter dem Artikelbild"
+
+#: class-lib/CF_WidgetClass.php:60
+msgid "Left of image"
+msgstr "Links vom Artikelbild"
+
+#: class-lib/CF_WidgetClass.php:60
+msgid "Right of image"
+msgstr "Rechts vom Artikelbild"
+
+#: class-lib/CF_WidgetClass.php:60
+msgid "Don&#39;t show excerpt"
+msgstr "Auszug nicht anzeigen "
+
+#: class-lib/CF_WidgetClass.php:62
+msgid "Above post"
+msgstr "Über dem Artikel"
+
+#: class-lib/CF_WidgetClass.php:62
+msgid "Under post"
+msgstr "Unter dem Artikel"
+
+#: class-lib/CF_WidgetClass.php:62
+msgid "Don&#39;t show date"
+msgstr "Datum nicht anzeigen"
+
 #: class-lib/CF_WidgetClass.php:92
 msgid "Title:"
 msgstr "Titel:"
@@ -110,7 +138,11 @@ msgstr "Kategorie auswählen"
 
 #: class-lib/CF_WidgetClass.php:94
 msgid "Link the widget title to the chosen category."
-msgstr "Kategorie auswählen"
+msgstr "Den Titel des Widgets mit der gewählten Kategorie verlinken."
+
+#: class-lib/CF_WidgetClass.php:94
+msgid "Show the post title."
+msgstr "Die Überschrift anzeigen."
 
 #: class-lib/CF_WidgetClass.php:95
 msgid "How many posts will be displayed in the widget:"
@@ -123,7 +155,7 @@ msgstr "Offset (wie viele Posts werden am Anfang übersprungen):"
 #: class-lib/CF_WidgetClass.php:97
 msgid "Check to display random post(s) instead of a standard loop:"
 msgstr ""
-"Anklicken, um zufällige(n) Artikel anstatt der Standardschleife anzuzeigen."
+"Anklicken, um zufällige(n) Artikel anstatt einer Standardschleife anzuzeigen."
 
 #: class-lib/CF_WidgetClass.php:98
 msgid "Check to have the offset only on your Frontpage."
@@ -148,6 +180,43 @@ msgstr "Anklicken, um Wörter anstatt Sätze als Auszug zu nehmen."
 #: class-lib/CF_WidgetClass.php:102
 msgid "Check to have each sentence in a new line."
 msgstr "Anklicken, um jeden Satz in einer neuen Zeile zu haben."
+
+#: class-lib/CF_WidgetClass.php:81
+msgid ""
+"Check to suppress shortcodes in the widget (in case the content is showing)."
+msgstr ""
+"Anklicken, um Shortcode im Widget zu unterdrücken (falls der Artikel "
+"angezeigt wird)."
+
+#: class-lib/CF_WidgetClass.php:81
+msgid "Check to keep the layout of the post (all tags and spaces)."
+msgstr ""
+"Anklicken, um das aktuelle Format des Artikels zu behalten (mit allen tags "
+"und Leerzeichen)."
+
+#: class-lib/CF_WidgetClass.php:87
+msgid ""
+"Check to return the excerpt unfiltered (might avoid interferences with other "
+"plugins)."
+msgstr ""
+"Anklicken, um den Auszug ungefiltert zu bekommen (das könnte Interferenzen "
+"mit anderen Plugins vermeiden)."
+
+#: class-lib/CF_WidgetClass.php:77
+msgid ""
+"Choose, whether or not to display the publishing date and whether it comes "
+"above or under the post."
+msgstr ""
+"Wähle, ob das Artikeldatum angezeigt werden soll, und ob es über oder unter "
+"dem Artikel zu sehen sein soll."
+
+#: class-lib/CF_WidgetClass.php:79
+msgid ""
+"Choose, whether or not to display the excerpt and whether it comes under the "
+"thumbnail or next to it."
+msgstr ""
+"Wähle, ob der Auszug angezeigt werden soll, und ob er unter das Thumbnail "
+"kommt oder daneben."
 
 #: class-lib/CF_WidgetClass.php:108
 msgid "Choose, whether to display the title above or under the thumbnail."
