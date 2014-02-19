@@ -3,14 +3,14 @@
 Plugin Name: Featured Category Widget
 Plugin URI: http://wasistlos.waldemarstoffel.com/plugins-fur-wordpress/featured-category-widget
 Description: The Featured Category Widget does, what the name says; it creates a widget, which you can drag to your sidebar and it will show excerpts of the posts of the category you chose. Display one or more random posts or the first five of the category in order.
-Version: 1.6
+Version: 1.7.1
 Author: Waldemar Stoffel
 Author URI: http://www.atelier-fuenf.de
 License: GPL3
 Text Domain: category-feature
 */
 
-/*  Copyright 2012 -2013 Waldemar Stoffel  (email : stoffel@atelier-fuenf.de)
+/*  Copyright 2012 -2014 Waldemar Stoffel  (email : stoffel@atelier-fuenf.de)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,13 @@ if (!class_exists('A5_Image')) require_once FCW_PATH.'class-lib/A5_ImageClass.ph
 if (!class_exists('A5_Excerpt')) require_once FCW_PATH.'class-lib/A5_ExcerptClass.php';
 if (!class_exists('Featured_Category_Widget')) require_once FCW_PATH.'class-lib/CF_WidgetClass.php';
 if (!class_exists('A5_FormField')) require_once FCW_PATH.'class-lib/A5_FormFieldClass.php';
-if (!function_exists('a5_textarea')) require_once FCW_PATH.'includes/A5_field-functions.php';
+if (!class_exists('A5_DynamicCSS')) :
+
+	require_once FCW_PATH.'class-lib/A5_DynamicCSSClass.php';
+	
+	$dynamic_css = new A5_DynamicCSS;
+	
+endif;
 
 class CategoryFeature {
 	
@@ -46,14 +52,25 @@ class CategoryFeature {
 	
 	function __construct() {
 		
-		register_activation_hook(  __FILE__, array($this, 'install_cfw') );
-		register_deactivation_hook(  __FILE__, array($this, 'unset_cfw') );
+		register_activation_hook(  __FILE__, array($this, 'install') );
+		register_deactivation_hook(  __FILE__, array($this, 'uninstall') );
 		
 		add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
 		add_filter('plugin_row_meta', array($this, 'register_links'), 10, 2);
 		
 		// import laguage files
 		load_plugin_textdomain(self::language_file, false , basename(dirname(__FILE__)).'/languages');
+		
+		// attach CSS and write your name in the comments
+		
+		$eol = "\r\n";
+		$tab = "\t";
+		
+		A5_DynamicCSS::$styles .= $eol.'/* CSS portion of the Featured Category Widget */'.$eol.$eol;
+		
+		A5_DynamicCSS::$styles.='div[id^="featured_category_widget"].widget_featured_category_widget img {'.$eol.$tab.'height: auto;'.$eol.$tab.'max-width: 100%;'.$eol.'}'.$eol;
+		
+		A5_DynamicCSS::$styles.='div[id^="featured_category_widget"].widget_featured_category_widget {'.$eol.$tab.'-moz-hyphens: auto;'.$eol.$tab.'-o-hyphens: auto;'.$eol.$tab.'-webkit-hyphens: auto;'.$eol.$tab.'-ms-hyphens: auto;'.$eol.$tab.'hyphens: auto; '.$eol.'}'.$eol;
 		
 	}
 	
@@ -62,7 +79,7 @@ class CategoryFeature {
 		
 		if ($hook != 'widgets.php') return;
 		
-		wp_register_script('ta-expander-script', plugins_url('ta-expander.js', __FILE__), array('jquery'), '2.0', true);
+		wp_register_script('ta-expander-script', plugins_url('ta-expander.js', __FILE__), array('jquery'), '3.0', true);
 		wp_enqueue_script('ta-expander-script');
 		
 	}
@@ -86,7 +103,7 @@ class CategoryFeature {
 	
 	// Creating default options on activation
 	
-	function install_cfw() {
+	function install() {
 		
 		$default = array(
 			'tags' => array(),
@@ -99,7 +116,7 @@ class CategoryFeature {
 	
 	// Cleaning on deactivation
 	
-	function unset_cfw() {
+	function uninstall() {
 		
 		delete_option('cf_options');
 		
