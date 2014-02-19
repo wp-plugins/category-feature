@@ -64,7 +64,9 @@ const language_file = 'category-feature';
 			'noshorts' => false,
 			'format' => false,
 			'show_date' => NULL,
-			'alignment' => NULL);
+			'alignment' => NULL,
+			'imgborder' => NULL
+		);
 		
 		$instance = wp_parse_args( (array) $instance, $defaults );
 		
@@ -106,6 +108,7 @@ const language_file = 'category-feature';
 		$format=esc_attr($instance['format']);
 		$show_date=esc_attr($instance['show_date']);
 		$alignment=esc_attr($instance['alignment']);
+		$imgborder=esc_attr($instance['imgborder']);
 		
 		$features = get_categories('hide_empty=0');
 		foreach ( $features as $feature ) :
@@ -151,6 +154,7 @@ const language_file = 'category-feature';
 		a5_checkbox($base_id.'random', $base_name.'[random]', $random, __('Check to display random post(s) instead of a standard loop:', self::language_file), array('space' => true));
 		a5_checkbox($base_id.'home', $base_name.'[home]', $home, __('Check to have the offset only on your Frontpage.', self::language_file), array('space' => true));
 		a5_number_field($base_id.'width', $base_name.'[width]', $width, __('Width of the thumbnail (in px):', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
+		a5_text_field($base_id.'imgborder', $base_name.'[imgborder]', $imgborder, sprintf(__('If wanting a border around the image, write the style here. %s would make it a black border, 1px wide.', self::language_file), '<strong>1px solid #000000</strong>'), array('space' => true, 'class' => 'widefat'));
 		a5_number_field($base_id.'wordcount', $base_name.'[wordcount]', $wordcount, __('To overwrite the excerpt of WP, give here the number of sentences from the post that you want to display:', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
 		a5_checkbox($base_id.'words', $base_name.'[words]', $words, __('Check to display words instead of sentences.', self::language_file), array('space' => true));
 		a5_checkbox($base_id.'linespace', $base_name.'[linespace]', $linespace, __('Check to have each sentence in a new line.', self::language_file), array('space' => true));
@@ -170,7 +174,7 @@ const language_file = 'category-feature';
 		a5_text_field($base_id.'class', $base_name.'[class]', $class, __('If you want to style the &#39;read more&#39; link, you can enter a class here.', self::language_file), array('space' => true, 'class' => 'widefat'));
 		a5_checkgroup(false, false, $pages, __('Check, where you want to show the widget. By default, it is showing on the homepage and the category pages:', self::language_file), $checkall);
 		a5_textarea($base_id.'style', $base_name.'[style]', $style, sprintf(__('Here you can finally style the widget. Simply type something like%1$s%2$sborder-left: 1px dashed;%2$sborder-color: #000000;%3$s%2$sto get just a dashed black line on the left. If you leave that section empty, your theme will style the widget.', self::language_file), '<strong>', '<br />', '</strong>'), array('style' => 'height: 60px;', 'class' => 'widefat', 'space' => true));
-		a5_resize_textarea(array($base_id.'excerpt', $base_id.'style'));
+		a5_resize_textarea(array($base_id.'style'));
 		
 	} // form
 	 
@@ -216,6 +220,7 @@ const language_file = 'category-feature';
 		$instance['format'] = strip_tags($new_instance['format']);
 		$instance['show_date'] = strip_tags($new_instance['show_date']);
 		$instance['alignment'] = strip_tags($new_instance['alignment']);
+		$instance['imgborder'] = strip_tags($new_instance['imgborder']);
 		
 		return $instance;
 	
@@ -274,12 +279,18 @@ const language_file = 'category-feature';
 			
 			$cfw_setup['posts_per_page'] = $instance['postcount'];
 			
-			if (is_home() || empty($instance['home'])) :
+			$cfw_setup['offset'] = $instance['offset'];
+			
+			if (is_category() || is_home() || empty($instance['home'])) :
 				
 				$cfw_page = $wp_query->get( 'paged' );
 				$cfw_numberposts = $wp_query->get( 'posts_per_page' );
 				
 				$cfw_setup['offset'] = ($cfw_page) ? (($cfw_page-1)*$cfw_numberposts)+$instance['offset'] : $instance['offset'];
+				
+				$cfw_cat_count = get_category($instance['category_id'])->category_count;
+				
+				if ($cfw_cat_count - $cfw_setup['offset'] < $cfw_setup['offset']) $cfw_setup['offset'] = $cfw_cat_count - $instance['postcount'];
 			
 			endif;
 			
@@ -294,7 +305,7 @@ const language_file = 'category-feature';
 			endif;
 			
 			$cfw_posts = new WP_Query($cfw_setup);
-			 
+			
 			while($cfw_posts->have_posts()) :
 				
 				$cfw_posts->the_post();
@@ -341,67 +352,77 @@ const language_file = 'category-feature';
 				$cfw_margin = '';
 				if ($instance['alignment'] == 'left') $cfw_margin = ' margin-right: 1em;';
 				if ($instance['alignment'] == 'right') $cfw_margin = ' margin-left: 1em;';
+				
+				$cfw_imgborder = (isset($instance['imgborder'])) ? ' border: '.$instance['imgborder'].';' : '';
 			
 				if (!has_post_thumbnail()) :
 					
-						$args = array (
-							'content' => $post->post_content,
-							'width' => $default[0],
-							'height' => $default[1], 
-							'option' => 'cf_options'
-						);	
-					   
-						$cfw_image_info = A5_Image::thumbnail($args);
-						
-						$cfw_thumb = $cfw_image_info['thumb'];
-						
-						$cfw_width = $cfw_image_info['thumb_width'];
-				
-						$cfw_height = $cfw_image_info['thumb_height'];
-						
-						if ($cfw_thumb) :
-						
-							if ($cfw_width) $cfw_img = '<img title="'.$cfw_image_title.'" src="'.$cfw_thumb.'" alt="'.$cfw_image_alt.'" class="wp-post-image" width="'.$cfw_width.'" height="'.$cfw_height.'" style="float: '.$cfw_float.';'.$cfw_margin.'" />';
-								
-							else $cfw_img = '<img title="'.$cfw_image_title.'" src="'.$cfw_thumb.'" alt="'.$cfw_image_alt.'" class="wp-post-image" style="maxwidth: '.$width.'; maxheight: '.$height.'; float: '.$fpw_float.';'.$fpw_margin.'" />';
+					$args = array (
+						'content' => $post->post_content,
+						'width' => $default[0],
+						'height' => $default[1], 
+						'option' => 'cf_options'
+					);	
+				   
+					$cfw_image_info = A5_Image::thumbnail($args);
+					
+					$cfw_thumb = $cfw_image_info['thumb'];
+					
+					$cfw_width = $cfw_image_info['thumb_width'];
+			
+					$cfw_height = $cfw_image_info['thumb_height'];
+					
+					if ($cfw_thumb) :
+					
+						if ($cfw_width) $cfw_img = '<img title="'.$cfw_image_title.'" src="'.$cfw_thumb.'" alt="'.$cfw_image_alt.'" class="wp-post-image" width="'.$cfw_width.'" height="'.$cfw_height.'" style="float: '.$cfw_float.';'.$cfw_margin.$cfw_imgborder.'" />';
 							
-						endif;
+						else $cfw_img = '<img title="'.$cfw_image_title.'" src="'.$cfw_thumb.'" alt="'.$cfw_image_alt.'" class="wp-post-image" style="max-width: '.$width.'; height: auto; float: '.$cfw_float.';'.$cfw_margin.$cfw_imgborder.'" />';
 						
-					else :
+					endif;
+						
+				else :
 				
 					$img_info = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), 'large');
 						
 					if (!$img_info):
 					
 						$src = get_the_post_thumbnail();
-					
+						
 						$img = preg_match_all('/<\s*img[^>]+src\s*=\s*["\']?([^\s"\']+)["\']?[\s\/>]+/', $src, $matches);
 						
-						$img_info[0] = $matches[1][0];
+						if ($img): 
 						
-						$img_size = A5_Image::get_size($img_info[0]);
-						
-						$img_info[1] = $img_size['width'];
-						
-						$img_info[2] = $img_size['height'];
+							$img_info[0] = $matches[1][0];
+							
+							$img_size = A5_Image::get_size($img_info[0]);
+							
+							$img_info[1] = $img_size['width'];
+							
+							$img_info[2] = $img_size['height'];
+							
+						endif;
 						
 					endif;
 					
-					$args = array (
-						'ratio' => $img_info[1]/$img_info[2],
-						'thumb_width' => $img_info[1],
-						'thumb_height' => $img_info[2],
-						'width' => $default[0],
-						'height' => $default[1]
-					);
+					if ($img_info) :
 					
-					$img_size = A5_Image::count_size($args);
+						$args = array (
+							'ratio' => $img_info[1]/$img_info[2],
+							'thumb_width' => $img_info[1],
+							'thumb_height' => $img_info[2],
+							'width' => $default[0],
+							'height' => $default[1]
+						);
+						
+						$img_size = A5_Image::count_size($args);
+						
+						$atts = array('title' => $cfw_image_title, 'alt' => $cfw_image_alt, 'style' => 'float: '.$cfw_float.';'.$cfw_margin.$cfw_imgborder);
+						
+						$size = array($img_size['width'], $img_size['height']);
 					
-					$atts = array('title' => $cfw_image_title, 'alt' => $cfw_image_alt, 'style' => 'float: '.$cfw_float.';'.$cfw_margin);
-					
-					$size = array($img_size['width'], $img_size['height']);
-				
-					$cfw_img = get_the_post_thumbnail($post->ID, $size, $atts);
+						$cfw_img = get_the_post_thumbnail($post->ID, $size, $atts);
+						
+					endif;
 					
 				endif;
 				

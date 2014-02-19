@@ -61,6 +61,8 @@ class CategoryFeature {
 		// import laguage files
 		load_plugin_textdomain(self::language_file, false , basename(dirname(__FILE__)).'/languages');
 		
+		// attach CSS and write your name in the comments
+		
 		$eol = "\r\n";
 		$tab = "\t";
 		
