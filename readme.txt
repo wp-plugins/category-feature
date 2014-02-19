@@ -13,7 +13,7 @@ The Featured Category Widget is basically a Featured Post Widget for a category.
 The Featured Category Widget is mainly designed because there were people for whom the Featured Post Widget was not enough. They wanted to put a category of their blog in the highlight.
 If there is a post thumbnail, it will be displayed above the headline of the post. If there is no thumbnail, the first picture of the post is taken. You can set the size for the thumbnail or just take the standard from your options. Decide yourself, whether you want to show the excerpt, saved with your post or just the first three sentences or the first twenty words of the post. Style the widget individually, ready.
 
-The Featured Category was tested up to WP 3.5. It should work with versions down to 2.9 but was never tested on those.
+The Featured Category was tested up to WP 3.9. It should work with versions down to 2.9 but was never tested on those.
 
 == Installation ==
 
