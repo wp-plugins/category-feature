@@ -3,7 +3,7 @@
 Plugin Name: Featured Category Widget
 Plugin URI: http://wasistlos.waldemarstoffel.com/plugins-fur-wordpress/featured-category-widget
 Description: The Featured Category Widget does, what the name says; it creates a widget, which you can drag to your sidebar and it will show excerpts of the posts of the category you chose. Display one or more random posts or the first five of the category in order.
-Version: 1.7.1
+Version: 1.8
 Author: Waldemar Stoffel
 Author URI: http://www.atelier-fuenf.de
 License: GPL3
@@ -30,57 +30,59 @@ Text Domain: category-feature
 
 /* Stop direct call */
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) die('Sorry, you don&#39;t have direct access to this page.');
+defined('ABSPATH') OR exit;
 
-define( 'FCW_PATH', plugin_dir_path(__FILE__) );
-	
+if (!defined('FCW_PATH')) define( 'FCW_PATH', plugin_dir_path(__FILE__) );
+if (!defined('FCW_BASE')) define( 'FCW_BASE', plugin_basename(__FILE__) );
+
+# loading the framework
 if (!class_exists('A5_Image')) require_once FCW_PATH.'class-lib/A5_ImageClass.php';
 if (!class_exists('A5_Excerpt')) require_once FCW_PATH.'class-lib/A5_ExcerptClass.php';
-if (!class_exists('Featured_Category_Widget')) require_once FCW_PATH.'class-lib/CF_WidgetClass.php';
 if (!class_exists('A5_FormField')) require_once FCW_PATH.'class-lib/A5_FormFieldClass.php';
-if (!class_exists('A5_DynamicCSS')) :
+if (!class_exists('A5_OptionPage')) require_once FCW_PATH.'class-lib/A5_OptionPageClass.php';
+if (!class_exists('A5_DynamicFiles')) require_once FCW_PATH.'class-lib/A5_DynamicFileClass.php';
 
-	require_once FCW_PATH.'class-lib/A5_DynamicCSSClass.php';
-	
-	$dynamic_css = new A5_DynamicCSS;
-	
-endif;
+#loading plugin specific classes
+if (!class_exists('CF_Admin')) require_once FCW_PATH.'class-lib/CF_AdminClass.php';
+if (!class_exists('CF_DynamicCSS')) require_once FCW_PATH.'class-lib/CF_DynamicCSSClass.php';
+if (!class_exists('Featured_Category_Widget')) require_once FCW_PATH.'class-lib/CF_WidgetClass.php';
 
 class CategoryFeature {
 	
 	const language_file = 'category-feature';
 	
+	static $options;
+	
 	function __construct() {
 		
-		register_activation_hook(  __FILE__, array($this, 'install') );
-		register_deactivation_hook(  __FILE__, array($this, 'uninstall') );
-		
-		add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-		add_filter('plugin_row_meta', array($this, 'register_links'), 10, 2);
-		
-		// import laguage files
 		load_plugin_textdomain(self::language_file, false , basename(dirname(__FILE__)).'/languages');
 		
-		// attach CSS and write your name in the comments
+		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
 		
-		$eol = "\r\n";
-		$tab = "\t";
+		add_filter('plugin_row_meta', array(&$this, 'register_links'), 10, 2);	
+		add_filter( 'plugin_action_links', array(&$this, 'plugin_action_links'), 10, 2 );
+				
+		register_activation_hook(  __FILE__, array(&$this, '_install') );
+		register_deactivation_hook(  __FILE__, array(&$this, '_uninstall') );
 		
-		A5_DynamicCSS::$styles .= $eol.'/* CSS portion of the Featured Category Widget */'.$eol.$eol;
+		self::$options = get_option('cf_options');
 		
-		A5_DynamicCSS::$styles.='div[id^="featured_category_widget"].widget_featured_category_widget img {'.$eol.$tab.'height: auto;'.$eol.$tab.'max-width: 100%;'.$eol.'}'.$eol;
+		if (!isset(self::$options['tags'])) $this->update_plugin_options();
 		
-		A5_DynamicCSS::$styles.='div[id^="featured_category_widget"].widget_featured_category_widget {'.$eol.$tab.'-moz-hyphens: auto;'.$eol.$tab.'-o-hyphens: auto;'.$eol.$tab.'-webkit-hyphens: auto;'.$eol.$tab.'-ms-hyphens: auto;'.$eol.$tab.'hyphens: auto; '.$eol.'}'.$eol;
+		$CF_DynamicCSS = new CF_DynamicCSS;
+		$CF_Admin = new CF_Admin;
 		
 	}
 	
 	/* attach JavaScript file for textarea resizing */
 	function enqueue_scripts($hook) {
 		
-		if ($hook != 'widgets.php') return;
+		if ($hook != 'settings_page_featured-category-settings' && $hook != 'widgets.php') return;
 		
 		wp_register_script('ta-expander-script', plugins_url('ta-expander.js', __FILE__), array('jquery'), '3.0', true);
 		wp_enqueue_script('ta-expander-script');
+		
+		if ($hook == 'settings_page_featured-category-settings' && WP_DEBUG === true) wp_enqueue_script('dashboard');
 		
 	}
 	
@@ -88,26 +90,30 @@ class CategoryFeature {
 	
 	function register_links($links, $file) {
 		
-		$base = plugin_basename(__FILE__);
-		
-		if ($file == $base) :
-		
-			$links[] = '<a href="http://wordpress.org/extend/plugins/category-feature/faq/" target="_blank">'.__('FAQ', self::language_file).'</a>';
+		if ($file == FCW_BASE) {
+			$links[] = '<a href="http://wordpress.org/extend/plugins/category-coloumn/faq/" target="_blank">'.__('FAQ', self::language_file).'</a>';
 			$links[] = '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RMF326NZYFL6L" target="_blank">'.__('Donate', self::language_file).'</a>';
+		}
 		
-		endif;
+		return $links;
 		
+	}
+		
+	function plugin_action_links( $links, $file ) {
+		
+		if ($file == FCW_BASE) array_unshift($links, '<a href="'.admin_url( 'options-general.php?page=featured-category-settings' ).'">'.__('Settings', self::language_file).'</a>');
+	
 		return $links;
 	
 	}
 	
 	// Creating default options on activation
 	
-	function install() {
+	function _install() {
 		
 		$default = array(
-			'tags' => array(),
-			'sizes' => array()
+			'cache' => array(),
+			'inline' => false
 		);
 		
 		add_option('cf_options', $default);
@@ -116,10 +122,24 @@ class CategoryFeature {
 	
 	// Cleaning on deactivation
 	
-	function uninstall() {
+	function _uninstall() {
 		
 		delete_option('cf_options');
 		
+	}
+	
+	// updating options in case they are outdated
+	
+	function update_plugin_options() {	
+		
+			self::$options['cache'] = array();
+			
+			self::$options['inline'] = false;
+			
+			unset(self::$options['tags'], self::$options['sizes']);
+			
+			update_option('cc_options', self::$options);
+	
 	}
 	
 }

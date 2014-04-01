@@ -12,6 +12,8 @@
 class Featured_Category_Widget extends WP_Widget {
 	
 const language_file = 'category-feature';
+
+private static $options;
  
 	function Featured_Category_Widget() {
 		
@@ -19,6 +21,8 @@ const language_file = 'category-feature';
 		$control_opts = array( 'width' => 400 );
 		
 		parent::WP_Widget(false, $name = 'Featured Category Widget', $widget_opts, $control_opts);
+		
+		self::$options = get_option('cf_options');
 	
 	}
 	 
@@ -36,7 +40,7 @@ const language_file = 'category-feature';
 			'home' => false,
 			'category_id' => NULL,
 			'wordcount' => NULL,
-			'width' => NULL,
+			'width' => get_option('thumbnail_size_w'),
 			'words' => NULL,
 			'readmore' => false,
 			'rmtext' => NULL,
@@ -173,7 +177,7 @@ const language_file = 'category-feature';
 		a5_text_field($base_id.'rmtext', $base_name.'[rmtext]', $rmtext, sprintf(__('Write here some text for the &#39;read more&#39; link. By default, it is %s:', self::language_file), '[&#8230;]'), array('class' => 'widefat', 'space' => true));
 		a5_text_field($base_id.'class', $base_name.'[class]', $class, __('If you want to style the &#39;read more&#39; link, you can enter a class here.', self::language_file), array('space' => true, 'class' => 'widefat'));
 		a5_checkgroup(false, false, $pages, __('Check, where you want to show the widget. By default, it is showing on the homepage and the category pages:', self::language_file), $checkall);
-		a5_textarea($base_id.'style', $base_name.'[style]', $style, sprintf(__('Here you can finally style the widget. Simply type something like%1$s%2$sborder-left: 1px dashed;%2$sborder-color: #000000;%3$s%2$sto get just a dashed black line on the left. If you leave that section empty, your theme will style the widget.', self::language_file), '<strong>', '<br />', '</strong>'), array('style' => 'height: 60px;', 'class' => 'widefat', 'space' => true));
+		if (empty(self::$options['css'])) a5_textarea($base_id.'style', $base_name.'[style]', $style, sprintf(__('Here you can finally style the widget. Simply type something like%1$s%2$sborder-left: 1px dashed;%2$sborder-color: #000000;%3$s%2$sto get just a dashed black line on the left. If you leave that section empty, your theme will style the widget.', self::language_file), '<strong>', '<br />', '</strong>'), array('style' => 'height: 60px;', 'class' => 'widefat', 'space' => true));
 		a5_resize_textarea(array($base_id.'style'));
 		
 	} // form
@@ -252,20 +256,14 @@ const language_file = 'category-feature';
 			$title = apply_filters('widget_title', $instance['title']);
 			
 			if (empty($instance['style'])) :
+			
+				$style=str_replace(array("\r\n", "\n", "\r"), '', $instance['style']);
 				
-				$cfw_before_widget=$before_widget;
-				$cfw_after_widget=$after_widget;
-				
-			else :
-				
-				$cfw_style=str_replace(array("\r\n", "\n", "\r"), '', $instance['style']);
-				
-				$cfw_before_widget='<div id="'.$widget_id.'" class="widget_featured_category_widget" style="'.$cfw_style.'">';
-				$cfw_after_widget='</div>';
-				
+				$before_widget = str_replace('>', 'style="'.$style.'">', $before_widget);
+			
 			endif;	
 			
-			echo $cfw_before_widget;
+			echo $before_widget;
 			
 			if ( $title && $instance['link_title'] ) $title = '<a href="'.get_category_link($instance['category_id']).'" title="'.__('Permalink to', self::language_file).' '.get_cat_name($instance['category_id']).'">'.$title.'</a>';
 			
@@ -288,7 +286,7 @@ const language_file = 'category-feature';
 				
 				$cfw_setup['offset'] = ($cfw_page) ? (($cfw_page-1)*$cfw_numberposts)+$instance['offset'] : $instance['offset'];
 				
-				$cfw_cat_count = get_category($instance['category_id'])->category_count;
+				$cfw_cat_count = (!empty($instance['category_id'])) ? get_category($instance['category_id'])->category_count : wp_count_posts()->publish;
 				
 				if ($cfw_cat_count - $cfw_setup['offset'] < $cfw_setup['offset']) $cfw_setup['offset'] = $cfw_cat_count - $instance['postcount'];
 			
@@ -329,7 +327,7 @@ const language_file = 'category-feature';
 				
 				$eol = "\r\n";
 				
-				$cfw_tags = A5_Image::tags($post, 'cf_options', self::language_file);
+				$cfw_tags = A5_Image::tags(self::language_file);
 		
 				$cfw_image_alt = $cfw_tags['image_alt'];
 				$cfw_image_title = $cfw_tags['image_title'];
@@ -345,8 +343,6 @@ const language_file = 'category-feature';
 	
 				// get thumbnail
 				
-				$default = A5_Image::get_default($instance['width']);
-				
 				$cfw_float = ($instance['alignment'] != 'notext') ? $instance['alignment'] : 'none';
 					
 				$cfw_margin = '';
@@ -355,76 +351,23 @@ const language_file = 'category-feature';
 				
 				$cfw_imgborder = (isset($instance['imgborder'])) ? ' border: '.$instance['imgborder'].';' : '';
 			
-				if (!has_post_thumbnail()) :
+				$id = get_the_ID();
 					
-					$args = array (
-						'content' => $post->post_content,
-						'width' => $default[0],
-						'height' => $default[1], 
-						'option' => 'cf_options'
-					);	
-				   
-					$cfw_image_info = A5_Image::thumbnail($args);
-					
-					$cfw_thumb = $cfw_image_info['thumb'];
-					
-					$cfw_width = $cfw_image_info['thumb_width'];
-			
-					$cfw_height = $cfw_image_info['thumb_height'];
-					
-					if ($cfw_thumb) :
-					
-						if ($cfw_width) $cfw_img = '<img title="'.$cfw_image_title.'" src="'.$cfw_thumb.'" alt="'.$cfw_image_alt.'" class="wp-post-image" width="'.$cfw_width.'" height="'.$cfw_height.'" style="float: '.$cfw_float.';'.$cfw_margin.$cfw_imgborder.'" />';
-							
-						else $cfw_img = '<img title="'.$cfw_image_title.'" src="'.$cfw_thumb.'" alt="'.$cfw_image_alt.'" class="wp-post-image" style="max-width: '.$width.'; height: auto; float: '.$cfw_float.';'.$cfw_margin.$cfw_imgborder.'" />';
+				$args = array (
+					'id' => $id,
+					'option' => 'cf_options',
+					'width' => $instance['width']
+				);
 						
-					endif;
+				$cfw_image_info = A5_Image::thumbnail($args);
 						
-				else :
+				$cfw_thumb = $cfw_image_info[0];
 				
-					$img_info = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), 'large');
-						
-					if (!$img_info):
+				$cfw_width = $cfw_image_info[1];
+		
+				$cfw_height = ($cfw_image_info[2]) ? 'height="'.$cfw_image_info[2].' "' : '';
 					
-						$src = get_the_post_thumbnail();
-						
-						$img = preg_match_all('/<\s*img[^>]+src\s*=\s*["\']?([^\s"\']+)["\']?[\s\/>]+/', $src, $matches);
-						
-						if ($img): 
-						
-							$img_info[0] = $matches[1][0];
-							
-							$img_size = A5_Image::get_size($img_info[0]);
-							
-							$img_info[1] = $img_size['width'];
-							
-							$img_info[2] = $img_size['height'];
-							
-						endif;
-						
-					endif;
-					
-					if ($img_info) :
-					
-						$args = array (
-							'ratio' => $img_info[1]/$img_info[2],
-							'thumb_width' => $img_info[1],
-							'thumb_height' => $img_info[2],
-							'width' => $default[0],
-							'height' => $default[1]
-						);
-						
-						$img_size = A5_Image::count_size($args);
-						
-						$atts = array('title' => $cfw_image_title, 'alt' => $cfw_image_alt, 'style' => 'float: '.$cfw_float.';'.$cfw_margin.$cfw_imgborder);
-						
-						$size = array($img_size['width'], $img_size['height']);
-					
-						$cfw_img = get_the_post_thumbnail($post->ID, $size, $atts);
-						
-					endif;
-					
-				endif;
+				if ($cfw_thumb) $cfw_img = '<img title="'.$cfw_image_title.'" src="'.$cfw_thumb.'" alt="'.$cfw_image_alt.'" class="wp-post-image" width="'.$cfw_width.'" '.$cfw_height.'style="float: '.$cfw_float.';'.$cfw_margin.$cfw_imgborder.'" />';
 				
 				// get excerpt
 					
@@ -490,7 +433,7 @@ const language_file = 'category-feature';
 				wp_reset_query();
 				wp_reset_postdata();
 			
-			echo $cfw_after_widget;
+			echo $after_widget;
 		
 		else:
 		
