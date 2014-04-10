@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Featured Category Widget 1.4\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/category-feature\n"
-"POT-Creation-Date: 2014-03-29 12:33+0200\n"
-"PO-Revision-Date: 2014-03-31 09:06+0200\n"
+"POT-Creation-Date: 2014-04-10 18:40+0200\n"
+"PO-Revision-Date: 2014-04-10 18:40+0200\n"
 "Last-Translator: Waldemar Stoffel <stoffel@atelier-fuenf.de>\n"
 "Language-Team: Waldemar Stoffel <stoffel@atelier-fuenf.de>\n"
 "Language: de_DE\n"
@@ -22,15 +22,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: category-feature.php:102
+#: category-feature.php:94
 msgid "FAQ"
 msgstr "FAQ"
 
-#: category-feature.php:103
+#: category-feature.php:95
 msgid "Donate"
 msgstr "Spenden"
 
-#: category-feature.php:112 class-lib/A5_OptionPageClass.php:31
+#: category-feature.php:104 class-lib/A5_OptionPageClass.php:31
 #: class-lib/CF_AdminClass.php:34
 msgid "Settings"
 msgstr "Einstellungen"
@@ -95,9 +95,30 @@ msgstr ""
 "Ablegen des CSS im Quellcode hilft dann. Hier klicken, um CSS inline zu "
 "schreiben."
 
-#: class-lib/CF_AdminClass.php:98
+#: class-lib/CF_AdminClass.php:94
+msgid "entries"
+msgstr "Einträge"
+
+#: class-lib/CF_AdminClass.php:94
+msgid "entry"
+msgstr "Eintrag"
+
+#: class-lib/CF_AdminClass.php:96
+#, php-format
+msgid "Empty cache (%d %s):"
+msgstr "Cache leeren (%d %s):"
+
+#: class-lib/CF_AdminClass.php:96
+msgid "You can empty the plugin&#39;s cache here, if necessary."
+msgstr "Falls nötig, kannst du hier den Cache des Plugins leeren."
+
+#: class-lib/CF_AdminClass.php:104
 msgid "Just put some css code here."
 msgstr "Einfach CSS Code hier eingeben."
+
+#: class-lib/CF_AdminClass.php:143
+msgid "Cache emptied."
+msgstr "Cache geleert."
 
 #: class-lib/CF_WidgetClass.php:20
 msgid ""
