@@ -69,7 +69,8 @@ private static $options;
 			'format' => false,
 			'show_date' => NULL,
 			'alignment' => NULL,
-			'imgborder' => NULL
+			'imgborder' => NULL,
+			'allow_double' => false
 		);
 		
 		$instance = wp_parse_args( (array) $instance, $defaults );
@@ -113,6 +114,7 @@ private static $options;
 		$show_date=esc_attr($instance['show_date']);
 		$alignment=esc_attr($instance['alignment']);
 		$imgborder=esc_attr($instance['imgborder']);
+		$allow_double=esc_attr($instance['allow_double']);
 		
 		$features = get_categories('hide_empty=0');
 		foreach ( $features as $feature ) :
@@ -176,6 +178,7 @@ private static $options;
 		a5_checkbox($base_id.'readmore', $base_name.'[readmore]', $readmore, __('Check to have an additional &#39;read more&#39; link at the end of the excerpt.', self::language_file), array('space' => true));
 		a5_text_field($base_id.'rmtext', $base_name.'[rmtext]', $rmtext, sprintf(__('Write here some text for the &#39;read more&#39; link. By default, it is %s:', self::language_file), '[&#8230;]'), array('class' => 'widefat', 'space' => true));
 		a5_text_field($base_id.'class', $base_name.'[class]', $class, __('If you want to style the &#39;read more&#39; link, you can enter a class here.', self::language_file), array('space' => true, 'class' => 'widefat'));
+		a5_checkbox($base_id.'allow_double', $base_name.'[allow_double]', $allow_double, __('Check to keep the post of the main loop in the widget.', self::language_file), array('space' => true));
 		a5_checkgroup(false, false, $pages, __('Check, where you want to show the widget. By default, it is showing on the homepage and the category pages:', self::language_file), $checkall);
 		if (empty(self::$options['css'])) a5_textarea($base_id.'style', $base_name.'[style]', $style, sprintf(__('Here you can finally style the widget. Simply type something like%1$s%2$sborder-left: 1px dashed;%2$sborder-color: #000000;%3$s%2$sto get just a dashed black line on the left. If you leave that section empty, your theme will style the widget.', self::language_file), '<strong>', '<br />', '</strong>'), array('style' => 'height: 60px;', 'class' => 'widefat', 'space' => true));
 		a5_resize_textarea(array($base_id.'style'));
@@ -225,6 +228,7 @@ private static $options;
 		$instance['show_date'] = strip_tags($new_instance['show_date']);
 		$instance['alignment'] = strip_tags($new_instance['alignment']);
 		$instance['imgborder'] = strip_tags($new_instance['imgborder']);
+		$instance['allow_double'] = @$new_instance['allow_double'];
 		
 		return $instance;
 	
@@ -296,7 +300,7 @@ private static $options;
 			
 			if ($instance['random']) $cfw_setup['orderby'] = 'rand';
 			
-			if (is_single()) :
+			if (is_single() && !$instance['allow_double']) :
 				
 				$cfw_setup['post__not_in'] = array($wp_query->get_queried_object_id());
 				

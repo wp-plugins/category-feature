@@ -3,7 +3,7 @@
 Plugin Name: Featured Category Widget
 Plugin URI: http://wasistlos.waldemarstoffel.com/plugins-fur-wordpress/featured-category-widget
 Description: The Featured Category Widget does, what the name says; it creates a widget, which you can drag to your sidebar and it will show excerpts of the posts of the category you chose. Display one or more random posts or the first five of the category in order.
-Version: 1.9
+Version: 2.0
 Author: Waldemar Stoffel
 Author URI: http://www.atelier-fuenf.de
 License: GPL3
@@ -67,7 +67,7 @@ class CategoryFeature {
 		
 		self::$options = get_option('cf_options');
 		
-		if (!isset(self::$options['tags'])) $this->update_plugin_options();
+		if (isset(self::$options['tags'])) $this->update_plugin_options();
 		
 		$CF_DynamicCSS = new CF_DynamicCSS;
 		$CF_Admin = new CF_Admin;

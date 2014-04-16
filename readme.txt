@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: column, sidebar, widget, category, newspaper, image, multi widget, teaser, featured, post, featured post, random post
 Requires at least: 2.9
 Tested up to: 3.9
-Stable tag: 1.9
+Stable tag: 2.0
 
 The Featured Category Widget is basically a Featured Post Widget for a category.
 
@@ -62,6 +62,10 @@ to the widget style to get a nice shadow down right of the container. This is no
 2. The widget's settings section
 
 == Changelog ==
+
+= 2.0 =
+
+* New feature to have post of the main loop in the widget on single pages
 
 = 1.9 =
 
@@ -149,3 +153,7 @@ Improvement in image recognition, more flexible
 = 1.9 =
 
 All 'Devided by Zero' errors should be eliminated
+
+= 2.0 =
+
+New feature to have post of the main loop in the widget on single pages
