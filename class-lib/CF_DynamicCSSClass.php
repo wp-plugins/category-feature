@@ -20,14 +20,16 @@ class CF_DynamicCSS extends A5_DynamicFiles {
 		
 		if (!isset(self::$options['inline'])) self::$options['inline'] = false;
 		
+		if (!isset(self::$options['compress'])) self::$options['compress'] = false;
+		
 		parent::A5_DynamicFiles('wp', 'css', false, self::$options['inline']);
 		
-		$eol = "\r\n";
-		$tab = "\t";
+		$eol = (self::$options['compress']) ? '' : "\r\n";
+		$tab = (self::$options['compress']) ? '' : "\t";
 		
 		$css_selector = '.widget_featured_category_widget[id^="featured_category_widget"]';
 		
-		parent::$wp_styles .= $eol.'/* CSS portion of the Featured Category Widget */'.$eol.$eol;
+		parent::$wp_styles .= (!self::$options['compress']) ? $eol.'/* CSS portion of the Featured Category Widget */'.$eol.$eol : '';
 		
 		$style = '-moz-hyphens: auto;'.$eol.$tab.'-o-hyphens: auto;'.$eol.$tab.'-webkit-hyphens: auto;'.$eol.$tab.'-ms-hyphens: auto;'.$eol.$tab.'hyphens: auto;';
 		

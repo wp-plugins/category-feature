@@ -70,7 +70,8 @@ private static $options;
 			'show_date' => NULL,
 			'alignment' => NULL,
 			'imgborder' => NULL,
-			'allow_double' => false
+			'allow_double' => false,
+			'alpha' => false
 		);
 		
 		$instance = wp_parse_args( (array) $instance, $defaults );
@@ -115,6 +116,7 @@ private static $options;
 		$alignment=esc_attr($instance['alignment']);
 		$imgborder=esc_attr($instance['imgborder']);
 		$allow_double=esc_attr($instance['allow_double']);
+		$alpha=esc_attr($instance['alpha']);
 		
 		$features = get_categories('hide_empty=0');
 		foreach ( $features as $feature ) :
@@ -158,6 +160,7 @@ private static $options;
 		a5_number_field($base_id.'postcount', $base_name.'[postcount]', $postcount, __('How many posts will be displayed in the widget:', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
 		a5_number_field($base_id.'offset', $base_name.'[offset]', $offset, __('Offset (how many posts are spared out in the beginning):', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
 		a5_checkbox($base_id.'random', $base_name.'[random]', $random, __('Check to display random post(s) instead of a standard loop:', self::language_file), array('space' => true));
+		a5_checkbox($base_id.'alpha', $base_name.'[alpha]', $alpha, __('Check to display posts in aplhabetical order:', self::language_file), array('space' => true));
 		a5_checkbox($base_id.'home', $base_name.'[home]', $home, __('Check to have the offset only on your Frontpage.', self::language_file), array('space' => true));
 		a5_number_field($base_id.'width', $base_name.'[width]', $width, __('Width of the thumbnail (in px):', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
 		a5_text_field($base_id.'imgborder', $base_name.'[imgborder]', $imgborder, sprintf(__('If wanting a border around the image, write the style here. %s would make it a black border, 1px wide.', self::language_file), '<strong>1px solid #000000</strong>'), array('space' => true, 'class' => 'widefat'));
@@ -229,6 +232,7 @@ private static $options;
 		$instance['alignment'] = strip_tags($new_instance['alignment']);
 		$instance['imgborder'] = strip_tags($new_instance['imgborder']);
 		$instance['allow_double'] = @$new_instance['allow_double'];
+		$instance['alpha'] = @$new_instance['alpha'];
 		
 		return $instance;
 	
@@ -300,11 +304,15 @@ private static $options;
 			
 			if ($instance['random']) $cfw_setup['orderby'] = 'rand';
 			
-			if (is_single() && !$instance['allow_double']) :
-				
-				$cfw_setup['post__not_in'] = array($wp_query->get_queried_object_id());
-				
+			if ($instance['alpha']) : 
+			
+				$cfw_setup['orderby'] = 'title';
+			
+				$cfw_setup['order'] = 'ASC';
+			
 			endif;
+			
+			if (is_single() && !$instance['allow_double']) $cfw_setup['post__not_in'] = array($wp_query->get_queried_object_id());
 			
 			$cfw_posts = new WP_Query($cfw_setup);
 			
