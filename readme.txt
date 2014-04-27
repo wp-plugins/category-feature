@@ -3,8 +3,8 @@ Contributors: tepelstreel
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RMF326NZYFL6L
 Tags: column, sidebar, widget, category, newspaper, image, multi widget, teaser, featured, post, featured post, random post
 Requires at least: 2.9
-Tested up to: 3.6
-Stable tag: 1.6
+Tested up to: 3.9.1	
+Stable tag: 2.1
 
 The Featured Category Widget is basically a Featured Post Widget for a category.
 
@@ -13,7 +13,7 @@ The Featured Category Widget is basically a Featured Post Widget for a category.
 The Featured Category Widget is mainly designed because there were people for whom the Featured Post Widget was not enough. They wanted to put a category of their blog in the highlight.
 If there is a post thumbnail, it will be displayed above the headline of the post. If there is no thumbnail, the first picture of the post is taken. You can set the size for the thumbnail or just take the standard from your options. Decide yourself, whether you want to show the excerpt, saved with your post or just the first three sentences or the first twenty words of the post. Style the widget individually, ready.
 
-The Featured Category was tested up to WP 3.5. It should work with versions down to 2.9 but was never tested on those.
+The Featured Category was tested up to WP 3.9. It should work with versions down to 2.9 but was never tested on those.
 
 == Installation ==
 
@@ -62,6 +62,38 @@ to the widget style to get a nice shadow down right of the container. This is no
 2. The widget's settings section
 
 == Changelog ==
+
+= 2.1 =
+
+* Posts now sortable in alphabetical order
+* DSS compressable
+
+= 2.0.1 =
+
+* Made compliant with WP 3.9.1 and small bugfix
+
+= 2.0 =
+
+* New feature to have post of the main loop in the widget on single pages
+
+= 1.9 =
+
+* All 'Devided by Zero' errors should be eliminated
+
+= 1.8 =
+
+* Improvement in image recognition, more flexible
+
+= 1.7.1 =
+
+* image border added and some streamlining done
+
+= 1.7 =
+
+* streamlined code
+* alignment of the thumbnail now possible
+* you can show the post date
+* more responsive
 
 = 1.6 =
 
@@ -114,3 +146,31 @@ you can now link the widget title to the displayed category
 = 1.6 =
 
 streamlined and more functionality added
+
+= 1.7 =
+
+new features and streamlined code
+
+= 1.7.1 =
+
+image border added and code streamlined
+
+= 1.8 =
+
+Improvement in image recognition, more flexible
+
+= 1.9 =
+
+All 'Devided by Zero' errors should be eliminated
+
+= 2.0 =
+
+New feature to have post of the main loop in the widget on single pages
+
+= 2.0.1 =
+
+Made compliant with WP 3.9.1 and small bugfix
+
+= 2.1 =
+
+Posts now sortable in alphabetical order; DSS compressable
