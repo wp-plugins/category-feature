@@ -54,12 +54,14 @@ private static $options;
 			'category' => 1,
 			'single' => false,
 			'date' => false,
+			'archive' => false,
 			'tag' => false,
 			'attachment' => false,
 			'taxonomy' => false,
 			'author' => false,
 			'search' => false,
 			'not_found' => false,
+			'login_page' => false,
 			'h' => 3,
 			'headline' => NULL,
 			'headshort' => NULL,
@@ -71,7 +73,8 @@ private static $options;
 			'alignment' => NULL,
 			'imgborder' => NULL,
 			'allow_double' => false,
-			'alpha' => false
+			'alpha' => false,
+			'custom_field' => NULL
 		);
 		
 		$instance = wp_parse_args( (array) $instance, $defaults );
@@ -100,12 +103,14 @@ private static $options;
 		$category=esc_attr($instance['category']);
 		$single=esc_attr($instance['single']);
 		$date=esc_attr($instance['date']);
+		$archive=esc_attr($instance['archive']);
 		$tag=esc_attr($instance['tag']);
 		$attachment=esc_attr($instance['attachment']);
 		$taxonomy=esc_attr($instance['taxonomy']);
 		$author=esc_attr($instance['author']);
 		$search=esc_attr($instance['search']);
 		$not_found=esc_attr($instance['not_found']);
+		$login_page=esc_attr($instance['login_page']);
 		$h=esc_attr($instance['h']);
 		$headline=esc_attr($instance['headline']);
 		$headshort=esc_attr($instance['headshort']);
@@ -117,6 +122,7 @@ private static $options;
 		$imgborder=esc_attr($instance['imgborder']);
 		$allow_double=esc_attr($instance['allow_double']);
 		$alpha=esc_attr($instance['alpha']);
+		$custom_field=esc_attr($instance['custom_field']);
 		
 		$features = get_categories('hide_empty=0');
 		foreach ( $features as $feature ) :
@@ -129,18 +135,20 @@ private static $options;
 		$base_name = 'widget-'.$this->id_base.'['.$this->number.']';
 		
 		$pages = array (
-			array($base_id.'homepage', $base_name.'[homepage]', $homepage, __('Homepage', self::language_file)),
-			array($base_id.'frontpage', $base_name.'[frontpage]', $frontpage, __('Frontpage (e.g. a static page as homepage)', self::language_file)),
-			array($base_id.'page', $base_name.'[page]', $page, __('&#34;Page&#34; pages', self::language_file)),
-			array($base_id.'category', $base_name.'[category]', $category, __('Category pages', self::language_file)),
-			array($base_id.'single', $base_name.'[single]', $single, __('Single post pages', self::language_file)),
-			array($base_id.'date', $base_name.'[date]', $date, __('Archive pages', self::language_file)),
-			array($base_id.'tag', $base_name.'[tag]', $tag, __('Tag pages', self::language_file)),
-			array($base_id.'attachment', $base_name.'[attachment]', $attachment, __('Attachments', self::language_file)),
-			array($base_id.'taxonomy', $base_name.'[taxonomy]', $taxonomy, __('Custom Taxonomy pages (only available, if having a plugin)', self::language_file)),
-			array($base_id.'author', $base_name.'[author]', $author, __('Author pages', self::language_file)),
-			array($base_id.'search', $base_name.'[search]', $search, __('Search Results', self::language_file)),
-			array($base_id.'not_found', $base_name.'[not_found]', $not_found, __('&#34;Not Found&#34;', self::language_file))
+				array($base_id.'homepage', $base_name.'[homepage]', $homepage, __('Homepage', self::language_file)),
+				array($base_id.'frontpage', $base_name.'[frontpage]', $frontpage, __('Frontpage (e.g. a static page as homepage)', self::language_file)),
+				array($base_id.'page', $base_name.'[page]', $page, __('&#34;Page&#34; pages', self::language_file)),
+				array($base_id.'category', $base_name.'[category]', $category, __('Category pages', self::language_file)),
+				array($base_id.'single', $base_name.'[single]', $single, __('Single post pages', self::language_file)),
+				array($base_id.'date', $base_name.'[date]', $date, __('Archive pages', self::language_file)),
+				array($base_id.'archive', $base_name.'[archive]', $archive, __('Post type archives', self::language_file)),
+				array($base_id.'tag', $base_name.'[tag]', $tag, __('Tag pages', self::language_file)),
+				array($base_id.'attachment', $base_name.'[attachment]', $attachment, __('Attachments', self::language_file)),
+				array($base_id.'taxonomy', $base_name.'[taxonomy]', $taxonomy, __('Custom Taxonomy pages (only available, if having a plugin)', self::language_file)),
+				array($base_id.'author', $base_name.'[author]', $author, __('Author pages', self::language_file)),
+				array($base_id.'search', $base_name.'[search]', $search, __('Search Results', self::language_file)),
+				array($base_id.'not_found', $base_name.'[not_found]', $not_found, __('&#34;Not Found&#34;', self::language_file)),
+				array($base_id.'login_page', $base_name.'[login_page]', $login_page, __('Login page (only available, if having a plugin)', self::language_file))
 		);
 			
 		$checkall = array($base_id.'checkall', $base_name.'[checkall]', __('Check all', self::language_file));
@@ -159,6 +167,7 @@ private static $options;
 		a5_checkbox($base_id.'no_title', $base_name.'[no_title]', $no_title, __('Show the post title.', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
 		a5_number_field($base_id.'postcount', $base_name.'[postcount]', $postcount, __('How many posts will be displayed in the widget:', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
 		a5_number_field($base_id.'offset', $base_name.'[offset]', $offset, __('Offset (how many posts are spared out in the beginning):', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
+		a5_text_field($base_id.'custom_field', $base_name.'[custom_field]', $custom_field, __('If you want to display a custom field, give it&#39;s name here:', self::language_file), array('class' => 'widefat', 'space' => true));
 		a5_checkbox($base_id.'random', $base_name.'[random]', $random, __('Check to display random post(s) instead of a standard loop:', self::language_file), array('space' => true));
 		a5_checkbox($base_id.'alpha', $base_name.'[alpha]', $alpha, __('Check to display posts in aplhabetical order:', self::language_file), array('space' => true));
 		a5_checkbox($base_id.'home', $base_name.'[home]', $home, __('Check to have the offset only on your Frontpage.', self::language_file), array('space' => true));
@@ -215,13 +224,15 @@ private static $options;
 		$instance['page'] = @$new_instance['page'];
 		$instance['category'] = @$new_instance['category'];
 		$instance['single'] = @$new_instance['single'];
-		$instance['date'] = @$new_instance['date']; 
+		$instance['date'] = @$new_instance['date'];
+		$instance['archive'] = @$new_instance['archive'];
 		$instance['tag'] = @$new_instance['tag'];
 		$instance['attachment'] = @$new_instance['attachment'];
 		$instance['taxonomy'] = @$new_instance['taxonomy'];
 		$instance['author'] = @$new_instance['author'];
 		$instance['search'] = @$new_instance['search'];
 		$instance['not_found'] = @$new_instance['not_found'];
+		$instance['login_page'] = @$new_instance['login_page'];
 		$instance['h'] = strip_tags($new_instance['h']);
 		$instance['headline'] = strip_tags($new_instance['headline']);
 		$instance['headshort'] = strip_tags($new_instance['headshort']);
@@ -233,6 +244,7 @@ private static $options;
 		$instance['imgborder'] = strip_tags($new_instance['imgborder']);
 		$instance['allow_double'] = @$new_instance['allow_double'];
 		$instance['alpha'] = @$new_instance['alpha'];
+		$instance['custom_field'] = strip_tags($new_instance['custom_field']);
 		
 		return $instance;
 	
@@ -241,23 +253,25 @@ private static $options;
 	function widget($args, $instance) {
 		
 		// get the type of page, we're actually on
-		
-		if (is_front_page()) $cfw_pagetype='frontpage';
-		if (is_home()) $cfw_pagetype='homepage';
-		if (is_page()) $cfw_pagetype='page';
-		if (is_category()) $cfw_pagetype='category';
-		if (is_single()) $cfw_pagetype='single';
-		if (is_date()) $cfw_pagetype='date';
-		if (is_tag()) $cfw_pagetype='tag';
-		if (is_attachment()) $cfw_pagetype='attachment';
-		if (is_tax()) $cfw_pagetype='taxonomy';
-		if (is_author()) $cfw_pagetype='author';
-		if (is_search()) $cfw_pagetype='search';
-		if (is_404()) $cfw_pagetype='not_found';
+	
+		if (is_front_page()) $pagetype='frontpage';
+		if (is_home()) $pagetype='homepage';
+		if (is_page()) $pagetype='page';
+		if (is_category()) $pagetype='category';
+		if (is_single()) $pagetype='single';
+		if (is_date()) $pagetype='date';
+		if (is_archive()) $pagetype='archive';
+		if (is_tag()) $pagetype='tag';
+		if (is_attachment()) $pagetype='attachment';
+		if (is_tax()) $pagetype='taxonomy';
+		if (is_author()) $pagetype='author';
+		if (is_search()) $pagetype='search';
+		if (is_404()) $pagetype='not_found';
+		if (!isset($pagetype)) $pagetype='login_page';
 		
 		// display only, if said so in the settings of the widget
 	
-		if ($instance[$cfw_pagetype]) :
+		if ($instance[$pagetype]) :
 			
 			extract( $args );
 			
@@ -363,10 +377,10 @@ private static $options;
 				
 				$cfw_imgborder = (isset($instance['imgborder'])) ? ' border: '.$instance['imgborder'].';' : '';
 			
-				$id = get_the_ID();
+				$post_id = get_the_ID();
 					
 				$args = array (
-					'id' => $id,
+					'id' => $post_id,
 					'option' => 'cf_options',
 					'width' => $instance['width']
 				);
@@ -388,6 +402,8 @@ private static $options;
 				$excerpt = ($instance['wordcount']) ? false : $post->post_excerpt;
 				
 				$rmtext = ($instance['rmtext']) ? $instance['rmtext'] : '[&#8230;]';
+				
+				$shortcode = ($instance['noshorts']) ? false : true;
 							
 				$args = array(
 					'excerpt' => $excerpt,
@@ -395,7 +411,7 @@ private static $options;
 					'type' => $type,
 					'count' => $instance['wordcount'],
 					'linespace' => $instance['linespace'],
-					'shortcode' => $instance['noshorts'],
+					'shortcode' => $shortcode,
 					'readmore' => $instance['readmore'],
 					'rmtext' => $rmtext,
 					'link' => get_permalink(),
@@ -427,6 +443,16 @@ private static $options;
 				
 				if ('bottom' == $instance['show_date']) echo $post_date.$eol;
 				
+				// custom field, if wanted
+				
+				if (isset($instance['custom_field'])) :
+				
+					$field = get_post_custom_values($instance['custom_field'], $post_id);
+					
+					if (isset($field)) foreach ($field as $value) echo '<p class="custom_field">'.$value.'</p>';
+					
+				endif;
+				
 				// line, if wanted
 				   
 				if (!empty($instance['line']) && $i <  $instance['postcount']) :
@@ -437,7 +463,7 @@ private static $options;
 					
 				endif;
 				
-				unset ($cfw_img, $source);
+				unset ($cfw_img);
 				
 				endwhile;
 			

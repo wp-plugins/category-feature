@@ -3,7 +3,7 @@
 Plugin Name: Featured Category Widget
 Plugin URI: http://wasistlos.waldemarstoffel.com/plugins-fur-wordpress/featured-category-widget
 Description: The Featured Category Widget does, what the name says; it creates a widget, which you can drag to your sidebar and it will show excerpts of the posts of the category you chose. Display one or more random posts or the first five of the category in order.
-Version: 2.2.2
+Version: 2.3
 Author: Waldemar Stoffel
 Author URI: http://www.atelier-fuenf.de
 License: GPL3
@@ -57,17 +57,17 @@ class CategoryFeature {
 		
 		load_plugin_textdomain(self::language_file, false , basename(dirname(__FILE__)).'/languages');
 		
-		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+		add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
 		
-		add_filter('plugin_row_meta', array(&$this, 'register_links'), 10, 2);	
-		add_filter( 'plugin_action_links', array(&$this, 'plugin_action_links'), 10, 2 );
+		add_filter('plugin_row_meta', array($this, 'register_links'), 10, 2);	
+		add_filter( 'plugin_action_links', array($this, 'plugin_action_links'), 10, 2 );
 				
-		register_activation_hook(  __FILE__, array(&$this, '_install') );
-		register_deactivation_hook(  __FILE__, array(&$this, '_uninstall') );
+		register_activation_hook(  __FILE__, array($this, '_install') );
+		register_deactivation_hook(  __FILE__, array($this, '_uninstall') );
 		
 		self::$options = get_option('cf_options');
 		
-		if (isset(self::$options['tags'])) $this->update_plugin_options();
+		if (isset(self::$options['tags'])) $this->_update_options();
 		
 		$CF_DynamicCSS = new CF_DynamicCSS;
 		$CF_Admin = new CF_Admin;
@@ -79,10 +79,10 @@ class CategoryFeature {
 		
 		if ($hook != 'settings_page_featured-category-settings' && $hook != 'widgets.php' && $hook != 'post.php') return;
 		
-		wp_register_script('ta-expander-script', plugins_url('ta-expander.js', __FILE__), array('jquery'), '3.0', true);
-		wp_enqueue_script('ta-expander-script');
+		$min = (WP_DEBUG == false) ? '.min.' : '.';
 		
-		if ($hook == 'settings_page_featured-category-settings' && WP_DEBUG === true) wp_enqueue_script('dashboard');
+		wp_register_script('ta-expander-script', plugins_url('ta-expander'.$min.'js', __FILE__), array('jquery'), '3.0', true);
+		wp_enqueue_script('ta-expander-script');
 		
 	}
 	
@@ -130,7 +130,7 @@ class CategoryFeature {
 	
 	// updating options in case they are outdated
 	
-	function update_plugin_options() {	
+	function _update_options() {	
 		
 			self::$options['cache'] = array();
 			
@@ -138,7 +138,7 @@ class CategoryFeature {
 			
 			unset(self::$options['tags'], self::$options['sizes']);
 			
-			update_option('cc_options', self::$options);
+			update_option('cf_options', self::$options);
 	
 	}
 	
