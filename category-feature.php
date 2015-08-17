@@ -3,14 +3,15 @@
 Plugin Name: Featured Category Widget
 Plugin URI: http://wasistlos.waldemarstoffel.com/plugins-fur-wordpress/featured-category-widget
 Description: The Featured Category Widget does, what the name says; it creates a widget, which you can drag to your sidebar and it will show excerpts of the posts of the category you chose. Display one or more random posts or the first five of the category in order.
-Version: 2.3.1
+Version: 2.4.1
 Author: Waldemar Stoffel
 Author URI: http://www.atelier-fuenf.de
 License: GPL3
 Text Domain: category-feature
+Domain Path: /languages
 */
 
-/*  Copyright 2012 -2014 Waldemar Stoffel  (email : stoffel@atelier-fuenf.de)
+/*  Copyright 2012 -2015 Waldemar Stoffel  (email : stoffel@atelier-fuenf.de)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@ if (!defined('FCW_BASE')) define( 'FCW_BASE', plugin_basename(__FILE__) );
 # loading the framework
 if (!class_exists('A5_Image')) require_once FCW_PATH.'class-lib/A5_ImageClass.php';
 if (!class_exists('A5_Excerpt')) require_once FCW_PATH.'class-lib/A5_ExcerptClass.php';
+if (!class_exists('A5_Widget')) require_once FCW_PATH.'class-lib/A5_WidgetClass.php';
 if (!class_exists('A5_FormField')) require_once FCW_PATH.'class-lib/A5_FormFieldClass.php';
 if (!class_exists('A5_OptionPage')) require_once FCW_PATH.'class-lib/A5_OptionPageClass.php';
 if (!class_exists('A5_DynamicFiles')) require_once FCW_PATH.'class-lib/A5_DynamicFileClass.php';
@@ -49,13 +51,11 @@ if (!class_exists('Featured_Category_Widget')) require_once FCW_PATH.'class-lib/
 
 class CategoryFeature {
 	
-	const language_file = 'category-feature';
-	
 	static $options;
 	
 	function __construct() {
 		
-		load_plugin_textdomain(self::language_file, false , basename(dirname(__FILE__)).'/languages');
+		load_plugin_textdomain('category-feature', false , basename(dirname(__FILE__)).'/languages');
 		
 		add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
 		
@@ -91,8 +91,8 @@ class CategoryFeature {
 	function register_links($links, $file) {
 		
 		if ($file == FCW_BASE) {
-			$links[] = '<a href="http://wordpress.org/extend/plugins/category-coloumn/faq/" target="_blank">'.__('FAQ', self::language_file).'</a>';
-			$links[] = '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RMF326NZYFL6L" target="_blank">'.__('Donate', self::language_file).'</a>';
+			$links[] = '<a href="http://wordpress.org/extend/plugins/category-coloumn/faq/" target="_blank">'.__('FAQ', 'category-feature').'</a>';
+			$links[] = '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RMF326NZYFL6L" target="_blank">'.__('Donate', 'category-feature').'</a>';
 		}
 		
 		return $links;
@@ -101,7 +101,7 @@ class CategoryFeature {
 		
 	function plugin_action_links( $links, $file ) {
 		
-		if ($file == FCW_BASE) array_unshift($links, '<a href="'.admin_url( 'options-general.php?page=featured-category-settings' ).'">'.__('Settings', self::language_file).'</a>');
+		if ($file == FCW_BASE) array_unshift($links, '<a href="'.admin_url( 'options-general.php?page=featured-category-settings' ).'">'.__('Settings', 'category-feature').'</a>');
 	
 		return $links;
 	
