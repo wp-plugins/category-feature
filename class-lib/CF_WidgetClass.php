@@ -383,8 +383,6 @@ private static $options;
 				
 				// output
 				
-				var_dump($instance['alignment']);
-				
 				if ('top' == $instance['headline']) echo $cfw_headline;
 				
 				if ('top' == $instance['show_date']) echo $post_date.$eol;
