@@ -9,18 +9,16 @@
  * building the actual widget
  *
  */
-class Featured_Category_Widget extends WP_Widget {
+class Featured_Category_Widget extends A5_Widget {
 	
-const language_file = 'category-feature';
-
 private static $options;
  
 	function Featured_Category_Widget() {
 		
-		$widget_opts = array( 'description' => __('Configure the output and looks of the widget. Then display thumbnails and excerpts of posts in your widget areas.', self::language_file) );
+		$widget_opts = array( 'description' => __('Configure the output and looks of the widget. Then display thumbnails and excerpts of posts in your widget areas.', 'category-feature') );
 		$control_opts = array( 'width' => 400 );
 		
-		parent::WP_Widget(false, $name = 'Featured Category Widget', $widget_opts, $control_opts);
+		parent::__construct(false, $name = 'Featured Category Widget', $widget_opts, $control_opts);
 		
 		self::$options = get_option('cf_options');
 	
@@ -65,7 +63,7 @@ private static $options;
 			'h' => 3,
 			'headline' => NULL,
 			'headshort' => NULL,
-			'class' => NULL,
+			'rmclass' => NULL,
 			'filter' => false,
 			'noshorts' => false,
 			'format' => false,
@@ -114,7 +112,7 @@ private static $options;
 		$h=esc_attr($instance['h']);
 		$headline=esc_attr($instance['headline']);
 		$headshort=esc_attr($instance['headshort']);
-		$class=esc_attr($instance['class']);
+		$rmclass=esc_attr($instance['rmclass']);
 		$filter=esc_attr($instance['filter']);
 		$format=esc_attr($instance['format']);
 		$show_date=esc_attr($instance['show_date']);
@@ -131,68 +129,43 @@ private static $options;
 		
 		endforeach;
 		
+		$options = array (array('top', __('Above thumbnail', 'category-feature')) , array('bottom', __('Under thumbnail', 'category-feature')));
+		
+		$date_options = array (array('top', __('Above post', 'category-feature')), array('middel', __('Under thumbnail', 'category-feature')), array('bottom', __('Under post', 'category-feature')), array('none', __('Don&#39;t show date', 'category-feature')));
+		
 		$base_id = 'widget-'.$this->id_base.'-'.$this->number.'-';
 		$base_name = 'widget-'.$this->id_base.'['.$this->number.']';
 		
-		$pages = array (
-				array($base_id.'homepage', $base_name.'[homepage]', $homepage, __('Homepage', self::language_file)),
-				array($base_id.'frontpage', $base_name.'[frontpage]', $frontpage, __('Frontpage (e.g. a static page as homepage)', self::language_file)),
-				array($base_id.'page', $base_name.'[page]', $page, __('&#34;Page&#34; pages', self::language_file)),
-				array($base_id.'category', $base_name.'[category]', $category, __('Category pages', self::language_file)),
-				array($base_id.'single', $base_name.'[single]', $single, __('Single post pages', self::language_file)),
-				array($base_id.'date', $base_name.'[date]', $date, __('Archive pages', self::language_file)),
-				array($base_id.'archive', $base_name.'[archive]', $archive, __('Post type archives', self::language_file)),
-				array($base_id.'tag', $base_name.'[tag]', $tag, __('Tag pages', self::language_file)),
-				array($base_id.'attachment', $base_name.'[attachment]', $attachment, __('Attachments', self::language_file)),
-				array($base_id.'taxonomy', $base_name.'[taxonomy]', $taxonomy, __('Custom Taxonomy pages (only available, if having a plugin)', self::language_file)),
-				array($base_id.'author', $base_name.'[author]', $author, __('Author pages', self::language_file)),
-				array($base_id.'search', $base_name.'[search]', $search, __('Search Results', self::language_file)),
-				array($base_id.'not_found', $base_name.'[not_found]', $not_found, __('&#34;Not Found&#34;', self::language_file)),
-				array($base_id.'login_page', $base_name.'[login_page]', $login_page, __('Login page (only available, if having a plugin)', self::language_file))
-		);
-			
-		$checkall = array($base_id.'checkall', $base_name.'[checkall]', __('Check all', self::language_file));
-		
-		$headings = array(array('1', 'h1'), array('2', 'h2'), array('3', 'h3'), array('4', 'h4'), array('5', 'h5'), array('6', 'h6'));
-		
-		$options = array (array('top', __('Above thumbnail', self::language_file)) , array('bottom', __('Under thumbnail', self::language_file)));
-		
-		$items = array (array('none', __('Under image', self::language_file)), array('right', __('Left of image', self::language_file)), array('left', __('Right of image', self::language_file)), array('notext', __('Don&#39;t show excerpt', self::language_file)));
-		
-		$date_options = array (array('top', __('Above post', self::language_file)), array('middel', __('Under thumbnail', self::language_file)), array('bottom', __('Under post', self::language_file)), array('none', __('Don&#39;t show date', self::language_file)));
-		
-		a5_text_field($base_id.'title', $base_name.'[title]', $title, __('Title:', self::language_file), array('class' => 'widefat', 'space' => true));
-		a5_select($base_id.'category_id', $base_name.'[category_id]', $categories, $category_id, __('Category:', self::language_file), __('Choose a category', self::language_file), array('class' => 'widefat', 'space' => true));
-		a5_checkbox($base_id.'link_title', $base_name.'[link_title]', $link_title, __('Link the widget title to the chosen category.', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
-		a5_checkbox($base_id.'no_title', $base_name.'[no_title]', $no_title, __('Show the post title.', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
-		a5_number_field($base_id.'postcount', $base_name.'[postcount]', $postcount, __('How many posts will be displayed in the widget:', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
-		a5_number_field($base_id.'offset', $base_name.'[offset]', $offset, __('Offset (how many posts are spared out in the beginning):', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
-		a5_text_field($base_id.'custom_field', $base_name.'[custom_field]', $custom_field, __('If you want to display a custom field, give it&#39;s name here:', self::language_file), array('class' => 'widefat', 'space' => true));
-		a5_checkbox($base_id.'random', $base_name.'[random]', $random, __('Check to display random post(s) instead of a standard loop:', self::language_file), array('space' => true));
-		a5_checkbox($base_id.'alpha', $base_name.'[alpha]', $alpha, __('Check to display posts in aplhabetical order:', self::language_file), array('space' => true));
-		a5_checkbox($base_id.'home', $base_name.'[home]', $home, __('Check to have the offset only on your Frontpage.', self::language_file), array('space' => true));
-		a5_number_field($base_id.'width', $base_name.'[width]', $width, __('Width of the thumbnail (in px):', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
-		a5_text_field($base_id.'imgborder', $base_name.'[imgborder]', $imgborder, sprintf(__('If wanting a border around the image, write the style here. %s would make it a black border, 1px wide.', self::language_file), '<strong>1px solid #000000</strong>'), array('space' => true, 'class' => 'widefat'));
-		a5_number_field($base_id.'wordcount', $base_name.'[wordcount]', $wordcount, __('To overwrite the excerpt of WP, give here the number of sentences from the post that you want to display:', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
-		a5_checkbox($base_id.'words', $base_name.'[words]', $words, __('Check to display words instead of sentences.', self::language_file), array('space' => true));
-		a5_checkbox($base_id.'linespace', $base_name.'[linespace]', $linespace, __('Check to have each sentence in a new line.', self::language_file), array('space' => true));
-		a5_checkbox($base_id.'noshorts', $base_name.'[noshorts]', $noshorts, __('Check to suppress shortcodes in the widget (in case the content is showing).', self::language_file), array('space' => true));
-		a5_checkbox($base_id.'filter', $base_name.'[filter]', $filter, __('Check to return the excerpt unfiltered (might avoid interferences with other plugins).', self::language_file), array('space' => true));
-		a5_checkbox($base_id.'format', $base_name.'[format]', $format, __('Check to keep the layout of the post (all tags and spaces).', self::language_file), array('space' => true));
-		a5_select($base_id.'headline', $base_name.'[headline]', $options, $headline, __('Choose, whether to display the title above or under the thumbnail.', self::language_file), false, array('space' => true));
-		a5_select($base_id.'h', $base_name.'[h]', $headings, $h, __('Weight of the Post Title:', self::language_file), false, array('space' => true));
-		a5_select($base_id.'show_date', $base_name.'[show_date]', $date_options, $show_date, __('Choose, whether or not to display the publishing date and whether it comes above or under the post.', self::language_file), false, array('space' => true));
-		a5_select($base_id.'alignment', $base_name.'[alignment]', $items, $alignment, __('Choose, whether or not to display the excerpt and whether it comes under the thumbnail or next to it.', self::language_file), false, array('space' => true));
+		a5_text_field($base_id.'title', $base_name.'[title]', $title, __('Title:', 'category-feature'), array('class' => 'widefat', 'space' => true));
+		a5_select($base_id.'category_id', $base_name.'[category_id]', $categories, $category_id, __('Category:', 'category-feature'), __('Choose a category', 'category-feature'), array('class' => 'widefat', 'space' => true));
+		a5_checkbox($base_id.'link_title', $base_name.'[link_title]', $link_title, __('Link the widget title to the chosen category.', 'category-feature'), array('size' => 4, 'step' => 1, 'space' => true));
+		a5_checkbox($base_id.'no_title', $base_name.'[no_title]', $no_title, __('Show the post title.', 'category-feature'), array('size' => 4, 'step' => 1, 'space' => true));
+		a5_number_field($base_id.'postcount', $base_name.'[postcount]', $postcount, __('How many posts will be displayed in the widget:', 'category-feature'), array('size' => 4, 'step' => 1, 'space' => true));
+		a5_number_field($base_id.'offset', $base_name.'[offset]', $offset, __('Offset (how many posts are spared out in the beginning):', 'category-feature'), array('size' => 4, 'step' => 1, 'space' => true));
+		a5_text_field($base_id.'custom_field', $base_name.'[custom_field]', $custom_field, __('If you want to display a custom field, give it&#39;s name here:', 'category-feature'), array('class' => 'widefat', 'space' => true));
+		a5_checkbox($base_id.'random', $base_name.'[random]', $random, __('Check to display random post(s) instead of a standard loop:', 'category-feature'), array('space' => true));
+		a5_checkbox($base_id.'alpha', $base_name.'[alpha]', $alpha, __('Check to display posts in aplhabetical order:', 'category-feature'), array('space' => true));
+		a5_checkbox($base_id.'home', $base_name.'[home]', $home, __('Check to have the offset only on your Frontpage.', 'category-feature'), array('space' => true));
+		a5_number_field($base_id.'width', $base_name.'[width]', $width, __('Width of the thumbnail (in px):', 'category-feature'), array('size' => 4, 'step' => 1, 'space' => true));
+		a5_text_field($base_id.'imgborder', $base_name.'[imgborder]', $imgborder, sprintf(__('If wanting a border around the image, write the style here. %s would make it a black border, 1px wide.', 'category-feature'), '<strong>1px solid #000000</strong>'), array('space' => true, 'class' => 'widefat'));
+		a5_number_field($base_id.'wordcount', $base_name.'[wordcount]', $wordcount, __('To overwrite the excerpt of WP, give here the number of sentences from the post that you want to display:', 'category-feature'), array('size' => 4, 'step' => 1, 'space' => true));
+		a5_checkbox($base_id.'words', $base_name.'[words]', $words, __('Check to display words instead of sentences.', 'category-feature'), array('space' => true));
+		a5_checkbox($base_id.'linespace', $base_name.'[linespace]', $linespace, __('Check to have each sentence in a new line.', 'category-feature'), array('space' => true));
+		a5_checkbox($base_id.'noshorts', $base_name.'[noshorts]', $noshorts, __('Check to suppress shortcodes in the widget (in case the content is showing).', 'category-feature'), array('space' => true));
+		a5_checkbox($base_id.'filter', $base_name.'[filter]', $filter, __('Check to return the excerpt unfiltered (might avoid interferences with other plugins).', 'category-feature'), array('space' => true));
+		a5_checkbox($base_id.'format', $base_name.'[format]', $format, __('Check to keep the layout of the post (all tags and spaces).', 'category-feature'), array('space' => true));
+		a5_select($base_id.'headline', $base_name.'[headline]', $options, $headline, __('Choose, whether to display the title above or under the thumbnail.', 'category-feature'), false, array('space' => true));
+		parent::select_heading($instance);
+		a5_select($base_id.'show_date', $base_name.'[show_date]', $date_options, $show_date, __('Choose, whether or not to display the publishing date and whether it comes above or under the post.', 'category-feature'), false, array('space' => true));
+		parent::textalign($instance);
 		$shorten_title = a5_number_field($base_id.'headshort', $base_name.'[headshort]', $headshort,false, array('size' => 4, 'step' => 1), false);
-		echo sprintf(__('%1$sLimit the title to %2$s words.%3$s', self::language_file), '<p>', $shorten_title, '</p>');
-		a5_number_field($base_id.'line', $base_name.'[line]', $line, __('If you want a line between the posts, this is the height in px (if not wanting a line, leave emtpy):', self::language_file), array('size' => 4, 'step' => 1, 'space' => true));
-		a5_color_field($base_id.'line_color', $base_name.'[line_color]', $line_color, __('The color of the line (e.g. #cccccc):', self::language_file), array('size' => 13, 'space' => true));	
-		a5_checkbox($base_id.'readmore', $base_name.'[readmore]', $readmore, __('Check to have an additional &#39;read more&#39; link at the end of the excerpt.', self::language_file), array('space' => true));
-		a5_text_field($base_id.'rmtext', $base_name.'[rmtext]', $rmtext, sprintf(__('Write here some text for the &#39;read more&#39; link. By default, it is %s:', self::language_file), '[&#8230;]'), array('class' => 'widefat', 'space' => true));
-		a5_text_field($base_id.'class', $base_name.'[class]', $class, __('If you want to style the &#39;read more&#39; link, you can enter a class here.', self::language_file), array('space' => true, 'class' => 'widefat'));
-		a5_checkbox($base_id.'allow_double', $base_name.'[allow_double]', $allow_double, __('Check to keep the post of the main loop in the widget.', self::language_file), array('space' => true));
-		a5_checkgroup(false, false, $pages, __('Check, where you want to show the widget. By default, it is showing on the homepage and the category pages:', self::language_file), $checkall);
-		if (empty(self::$options['css'])) a5_textarea($base_id.'style', $base_name.'[style]', $style, sprintf(__('Here you can finally style the widget. Simply type something like%1$s%2$sborder-left: 1px dashed;%2$sborder-color: #000000;%3$s%2$sto get just a dashed black line on the left. If you leave that section empty, your theme will style the widget.', self::language_file), '<strong>', '<br />', '</strong>'), array('style' => 'height: 60px;', 'class' => 'widefat', 'space' => true));
+		echo sprintf(__('%1$sLimit the title to %2$s words.%3$s', 'category-feature'), '<p>', $shorten_title, '</p>');
+		a5_number_field($base_id.'line', $base_name.'[line]', $line, __('If you want a line between the posts, this is the height in px (if not wanting a line, leave emtpy):', 'category-feature'), array('size' => 4, 'step' => 1, 'space' => true));
+		a5_color_field($base_id.'line_color', $base_name.'[line_color]', $line_color, __('The color of the line (e.g. #cccccc):', 'category-feature'), array('size' => 13, 'space' => true));	
+		parent::read_more($instance);
+		a5_checkbox($base_id.'allow_double', $base_name.'[allow_double]', $allow_double, __('Check to keep the post of the main loop in the widget.', 'category-feature'), array('space' => true));
+		parent::page_checkgroup($instance);
+		a5_textarea($base_id.'style', $base_name.'[style]', $style, sprintf(__('Here you can finally style the widget. Simply type something like%1$s%2$sborder-left: 1px dashed;%2$sborder-color: #000000;%3$s%2$sto get just a dashed black line on the left. If you leave that section empty, your theme will style the widget.', 'category-feature'), '<strong>', '<br />', '</strong>'), array('style' => 'height: 60px;', 'class' => 'widefat', 'space' => true));
 		a5_resize_textarea(array($base_id.'style'));
 		
 	} // form
@@ -236,7 +209,7 @@ private static $options;
 		$instance['h'] = strip_tags($new_instance['h']);
 		$instance['headline'] = strip_tags($new_instance['headline']);
 		$instance['headshort'] = strip_tags($new_instance['headshort']);
-		$instance['class'] = strip_tags($new_instance['class']);
+		$instance['rmclass'] = strip_tags($new_instance['rmclass']);
 		$instance['filter'] = @$new_instance['filter'];
 		$instance['format'] = @$new_instance['format'];
 		$instance['show_date'] = strip_tags($new_instance['show_date']);
@@ -252,28 +225,11 @@ private static $options;
 	 
 	function widget($args, $instance) {
 		
-		// get the type of page, we're actually on
-	
-		if (is_front_page()) $pagetype[]='frontpage';
-		if (is_home()) $pagetype[]='homepage';
-		if (is_page()) $pagetype[]='page';
-		if (is_category()) $pagetype[]='category';
-		if (is_single()) $pagetype[]='single';
-		if (is_date()) $pagetype[]='date';
-		if (is_archive()) $pagetype[]='archive';
-		if (is_tag()) $pagetype[]='tag';
-		if (is_attachment()) $pagetype[]='attachment';
-		if (is_tax()) $pagetype[]='taxonomy';
-		if (is_author()) $pagetype[]='author';
-		if (is_search()) $pagetype[]='search';
-		if (is_404()) $pagetype[]='not_found';
-		if (!isset($pagetype)) $pagetype[]='login_page';
-		
-		// display only, if said so in the settings of the widget
-		
-		foreach ($pagetype as $page) if ($instance[$page]) $show_widget = true;
+		$show_widget = parent::check_output($instance);
 	
 		if ($show_widget) :
+			
+			rewind_posts();
 			
 			extract( $args );
 			
@@ -289,7 +245,7 @@ private static $options;
 			
 			echo $before_widget;
 			
-			if ( $title && $instance['link_title'] ) $title = '<a href="'.get_category_link($instance['category_id']).'" title="'.__('Permalink to', self::language_file).' '.get_cat_name($instance['category_id']).'">'.$title.'</a>';
+			if ( $title && $instance['link_title'] ) $title = '<a href="'.get_category_link($instance['category_id']).'" title="'.__('Permalink to', 'category-feature').' '.get_cat_name($instance['category_id']).'">'.$title.'</a>';
 			
 			if ( $title ) echo $before_title . $title . $after_title;
 		 
@@ -353,9 +309,9 @@ private static $options;
 					
 				endif;
 				
-				$eol = "\r\n";
+				$eol = "\n";
 				
-				$cfw_tags = A5_Image::tags(self::language_file);
+				$cfw_tags = A5_Image::tags();
 		
 				$cfw_image_alt = $cfw_tags['image_alt'];
 				$cfw_image_title = $cfw_tags['image_title'];
@@ -363,7 +319,7 @@ private static $options;
 			
 				$cfw_headline = (!empty($instance['no_title'])) ? '<h'.$instance['h'].'>'.$eol.'<a href="'.get_permalink().'" title="'.$cfw_title_tag.'">'.$the_title.'</a>'.$eol.'</h'.$instance['h'].'>'.$eol : '';
 				
-				$cfw_title_tag = __('Permalink to', self::language_file).' '.$post->post_title;
+				$cfw_title_tag = __('Permalink to', 'category-feature').' '.$post->post_title;
 				
 				$cfw_style = ($instance['alignment'] != 'notext' && $instance['alignment'] != 'none') ? ' style="text-align: '.$instance['alignment'].';"' : '';
 				
@@ -418,7 +374,7 @@ private static $options;
 					'rmtext' => $rmtext,
 					'link' => get_permalink(),
 					'title' => $cfw_title_tag,
-					'class' => $instance['class'],
+					'class' => $instance['rmclass'],
 					'filter' => $instance['filter'],
 					'format' => $instance['format']
 				);
@@ -426,6 +382,8 @@ private static $options;
 				$cfw_text = A5_Excerpt::text($args);
 				
 				// output
+				
+				var_dump($instance['alignment']);
 				
 				if ('top' == $instance['headline']) echo $cfw_headline;
 				
